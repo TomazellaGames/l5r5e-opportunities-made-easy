@@ -1,3 +1,8 @@
+/* ── Sidebar scroll-icon button (opens reference floating window) ── */
+.l5r5e-opp-ref-btn {
+  cursor: pointer;
+}
+
 /* ── Opportunities button injected into chat cards and the RnK dialog ── */
 .l5r5e-opportunities-made-easy-btn {
   display: block;
@@ -187,17 +192,16 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Opportunities Reference — Sidebar Tab
+   Opportunities Reference — Floating Window
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Foundry's ApplicationV2 sidebar system controls show/hide automatically.
-   We only need layout: fill height with filters pinned at top, list scrolling. */
-#l5r5e-opportunities-reference {
+/* Target the window-content section so filters pin at top and list scrolls.
+   Scope to our app ID to avoid touching any other Foundry windows. */
+#l5r5e-opportunities-reference .window-content {
   display: flex;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
-  height: 100%;
 }
 
 #l5r5e-opportunities-reference .opp-ref-wrapper {

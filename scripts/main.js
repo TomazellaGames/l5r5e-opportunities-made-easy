@@ -1,6 +1,6 @@
 // scripts/main.js
-import { OpportunitiesApp }       from "./opportunities-app.js";
-import { OpportunitiesReference } from "./opportunities-reference.js";
+import { OpportunitiesApp }            from "./opportunities-app.js";
+import { OpportunitiesReferenceWindow } from "./opportunities-reference.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
@@ -13,32 +13,44 @@ Hooks.once("init", () => {
     return out;
   });
 
-  // ── Register sidebar tab (Foundry v14 ApplicationV2 approach) ──
-  // Step 1: map the tab key to our class
-  CONFIG.ui.l5r5eopps = OpportunitiesReference;
-
-  // Step 2: add the nav button entry to Sidebar.TABS so the icon appears.
-  // This is required in v14 – CONFIG.ui alone no longer creates the nav button.
-  // We insert just before "settings" so our tab sits at the end before the gear.
-  const Sidebar = foundry.applications.sidebar.Sidebar;
-  if (Sidebar?.TABS) {
-    const settingsEntry = Sidebar.TABS.settings;
-    if (settingsEntry) {
-      delete Sidebar.TABS.settings;
-    }
-    Sidebar.TABS.l5r5eopps = {
-      icon:    "fa-solid fa-scroll",
-      tooltip: "Opportunities Reference",
-    };
-    if (settingsEntry) {
-      Sidebar.TABS.settings = settingsEntry;
-    }
-  }
-
   loadTemplates([
     `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
     `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
   ]);
+});
+
+// ── Sidebar button ────────────────────────────────────────────────────────────
+// Inject a nav button into the sidebar that opens/closes the reference window.
+// We do this via renderSidebar rather than CONFIG.ui/Sidebar.TABS to avoid
+// ApplicationV2 panel rendering issues.
+Hooks.on("renderSidebar", (_app, element) => {
+  const sidebar = element instanceof HTMLElement
+    ? element
+    : document.getElementById("sidebar");
+  if (!sidebar) return;
+
+  // Run only once (sidebar re-renders rarely, but guard anyway)
+  if (sidebar.querySelector(".l5r5e-opp-ref-btn")) return;
+
+  const tabNav = sidebar.querySelector("nav.tabs");
+  if (!tabNav) return;
+
+  const btn = document.createElement("a");
+  btn.className = "item l5r5e-opp-ref-btn";
+  btn.setAttribute("data-tooltip", "Opportunities Reference");
+  btn.setAttribute("aria-label", "Opportunities Reference");
+  btn.innerHTML = `<i class="fa-solid fa-scroll"></i>`;
+
+  // Place just before the settings gear so our button sits near the end
+  const settingsBtn = tabNav.querySelector("[data-tab='settings']");
+  if (settingsBtn) settingsBtn.insertAdjacentElement("beforebegin", btn);
+  else tabNav.appendChild(btn);
+
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    OpportunitiesReferenceWindow.toggle();
+  });
 });
 
 // ── Guard: only inject the button on genuine L5R dice rolls ───────────────────

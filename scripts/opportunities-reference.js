@@ -14,7 +14,7 @@ const RING_LABELS = {
 
 // ── Flat entry list ───────────────────────────────────────────────────────────
 
-export function buildReferenceEntries() {
+function buildEntries() {
   const entries = [];
 
   const push = (opp, ring, situation, situationLabel) =>
@@ -46,15 +46,15 @@ export function buildReferenceEntries() {
 
 // ── Filter listeners ──────────────────────────────────────────────────────────
 
-export function activateReferenceListeners(root) {
+function activateFilters(root) {
   let activeRing      = "";
   let activeSituation = "";
 
-  const applyFilters = () =>
-    root.querySelectorAll(".opp-ref-entry").forEach(entry => {
-      const ringOk = !activeRing || entry.dataset.ring === activeRing || entry.dataset.ring === "any";
-      const sitOk  = !activeSituation || entry.dataset.situation === activeSituation;
-      entry.classList.toggle("opp-ref-hidden", !(ringOk && sitOk));
+  const apply = () =>
+    root.querySelectorAll(".opp-ref-entry").forEach(el => {
+      const ringOk = !activeRing || el.dataset.ring === activeRing || el.dataset.ring === "any";
+      const sitOk  = !activeSituation || el.dataset.situation === activeSituation;
+      el.classList.toggle("opp-ref-hidden", !(ringOk && sitOk));
     });
 
   root.querySelectorAll(".opp-ref-filter[data-filter-type='ring']").forEach(btn =>
@@ -62,7 +62,7 @@ export function activateReferenceListeners(root) {
       activeRing = btn.dataset.filterValue;
       root.querySelectorAll(".opp-ref-filter[data-filter-type='ring']")
           .forEach(b => b.classList.toggle("active", b === btn));
-      applyFilters();
+      apply();
     })
   );
 
@@ -71,44 +71,49 @@ export function activateReferenceListeners(root) {
       activeSituation = btn.dataset.filterValue;
       root.querySelectorAll(".opp-ref-filter[data-filter-type='situation']")
           .forEach(b => b.classList.toggle("active", b === btn));
-      applyFilters();
+      apply();
     })
   );
 }
 
-// ── Sidebar Tab — Foundry v14 ApplicationV2 ───────────────────────────────────
-// Uses HandlebarsApplicationMixin(AbstractSidebarTab) exactly as Dice So Nice does.
-// Registered via CONFIG.ui AND foundry.applications.sidebar.Sidebar.TABS (see main.js).
+// ── Floating reference window ─────────────────────────────────────────────────
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-const { AbstractSidebarTab }         = foundry.applications.sidebar;
+export class OpportunitiesReferenceWindow extends Application {
 
-export class OpportunitiesReference extends HandlebarsApplicationMixin(AbstractSidebarTab) {
+  static #instance = null;
 
-  static tabName = "l5r5eopps";
-
-  static DEFAULT_OPTIONS = {
-    id:      "l5r5e-opportunities-reference",
-    classes: ["l5r5e-opportunities-made-easy"],
-    window:  {
-      title: "Opportunities Reference",
-      icon:  "fa-solid fa-scroll",
-    },
-  };
-
-  static PARTS = {
-    content: {
-      template: `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
-      root: true,
-    },
-  };
-
-  async _prepareContext(_options) {
-    return { entries: buildReferenceEntries() };
+  /** Open if closed, close if open. */
+  static toggle() {
+    if (OpportunitiesReferenceWindow.#instance?.rendered) {
+      OpportunitiesReferenceWindow.#instance.close();
+    } else {
+      (OpportunitiesReferenceWindow.#instance ??= new OpportunitiesReferenceWindow()).render(true);
+    }
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
-    activateReferenceListeners(this.element);
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id:        "l5r5e-opportunities-reference",
+      classes:   ["l5r5e-opportunities-made-easy"],
+      template:  `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
+      title:     "Opportunities Reference",
+      width:     520,
+      height:    620,
+      resizable: true,
+    });
+  }
+
+  async getData() {
+    return { entries: buildEntries() };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    activateFilters(html instanceof jQuery ? html[0] : html);
+  }
+
+  async close(options = {}) {
+    await super.close(options);
+    OpportunitiesReferenceWindow.#instance = null;
   }
 }
