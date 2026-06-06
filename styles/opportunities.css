@@ -1,0 +1,131 @@
+/* ── Opportunities button injected into chat cards and the RnK dialog ── */
+.l5r5e-opportunities-made-easy-btn {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 1);
+  background: linear-gradient(
+    rgba(95, 40, 65, 1),
+    rgba(65, 25, 40, 1),
+    rgba(95, 40, 65, 1)
+  );
+  border-image: url("../systems/l5r5e/assets/ui/macro-button.webp") 10 repeat;
+  border-image-width: 0.5rem;
+  border-image-outset: 0;
+}
+
+.l5r5e-opportunities-made-easy-btn:hover {
+  background: linear-gradient(
+    rgba(65, 20, 15, 0.75),
+    rgba(35, 10, 5, 0.75),
+    rgba(65, 20, 15, 0.75)
+  );
+}
+
+/* ── Popup window container ── */
+.l5r5e-opportunities-made-easy .opportunities-window {
+  padding: 0.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* ── Opportunity count banner ── */
+.l5r5e-opportunities-made-easy .opp-counter {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: rgb(90, 110, 90);
+}
+
+/* ── Individual section (Generic / Ring / Conflict / Technique) ── */
+.l5r5e-opportunities-made-easy .opp-section {
+  margin-bottom: 0.6rem;
+  border: 1px solid rgba(186, 187, 177, 0.5);
+  border-radius: 3px;
+  padding: 0.35rem 0.5rem;
+}
+
+.l5r5e-opportunities-made-easy .opp-section h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(186, 187, 177, 0.3);
+  padding-bottom: 0.15rem;
+  color: rgb(118, 79, 64);
+}
+
+/* Ring-coloured section headers */
+.l5r5e-opportunities-made-easy .opp-section.air   h3 { color: rgb(145, 120, 150); }
+.l5r5e-opportunities-made-easy .opp-section.earth h3 { color: rgb(105, 150, 120); }
+.l5r5e-opportunities-made-easy .opp-section.fire  h3 { color: rgb(155, 115, 80);  }
+.l5r5e-opportunities-made-easy .opp-section.water h3 { color: rgb(95, 145, 155);  }
+.l5r5e-opportunities-made-easy .opp-section.void  h3 { color: rgb(75, 70, 65);    }
+
+/* Technique-coloured section headers */
+.l5r5e-opportunities-made-easy .opp-section.kata       h3 { color: rgb(200, 50, 50);   }
+.l5r5e-opportunities-made-easy .opp-section.kiho       h3 { color: rgb(0, 150, 50);    }
+.l5r5e-opportunities-made-easy .opp-section.shuji      h3 { color: rgb(50, 150, 255);  }
+.l5r5e-opportunities-made-easy .opp-section.invocation h3 { color: rgb(255, 130, 0);   }
+.l5r5e-opportunities-made-easy .opp-section.ritual     h3 { color: rgb(100, 200, 255); }
+.l5r5e-opportunities-made-easy .opp-section.maho       h3 { color: rgb(180, 0, 0);     }
+.l5r5e-opportunities-made-easy .opp-section.ninjutsu   h3 { color: rgb(80, 80, 80);    }
+.l5r5e-opportunities-made-easy .opp-section.mantra     h3 { color: rgb(255, 190, 0);   }
+.l5r5e-opportunities-made-easy .opp-section.inversion  h3 { color: rgb(120, 80, 160);  }
+
+/* ── List of opportunity entries ── */
+.l5r5e-opportunities-made-easy .opp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.l5r5e-opportunities-made-easy .opp-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid rgba(186, 187, 177, 0.12);
+}
+
+.l5r5e-opportunities-made-easy .opp-entry:last-child {
+  border-bottom: none;
+}
+
+.l5r5e-opportunities-made-easy .opp-cost {
+  flex-shrink: 0;
+  min-width: 1.8rem;
+  text-align: right;
+  padding-top: 0.1rem;
+}
+
+.l5r5e-opportunities-made-easy .opp-body {
+  flex: 1;
+}
+
+.l5r5e-opportunities-made-easy .opp-name {
+  display: block;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.l5r5e-opportunities-made-easy .opp-desc {
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.l5r5e-opportunities-made-easy .opp-note {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin-top: 0.1rem;
+}
+
+.l5r5e-opportunities-made-easy .opp-empty {
+  font-size: 0.8rem;
+  opacity: 0.5;
+  font-style: italic;
+}

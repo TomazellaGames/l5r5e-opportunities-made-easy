@@ -1,0 +1,44 @@
+<div class="opportunities-window">
+
+  <div class="opp-counter">
+    <i class="i_opportunity"></i> {{oppCount}} Opportunities Rolled
+  </div>
+
+  {{> opp-section title="Generic Opportunities" entries=generic}}
+
+  {{#if ring}}
+    {{> opp-section title=(localizeRing ring) entries=ringOpps ringClass=ring}}
+  {{/if}}
+
+  {{#if isConflict}}
+    {{> opp-section title="Conflict Opportunities" entries=conflict}}
+  {{/if}}
+
+  {{#if isTech}}
+    {{> opp-section title=techType entries=techOpps techClass=techType}}
+  {{/if}}
+
+</div>
+
+{{!-- Inline partial: renders one collapsible opportunity section --}}
+{{#*inline "opp-section"}}
+<section class="opp-section {{ringClass}} {{techClass}}">
+  <h3>{{title}}</h3>
+  {{#if entries.length}}
+  <ul class="opp-list">
+    {{#each entries}}
+    <li class="opp-entry">
+      <span class="opp-cost">{{#times this.cost}}<i class="i_opportunity"></i>{{/times}}</span>
+      <div class="opp-body">
+        <strong class="opp-name">{{this.name}}</strong>
+        <p class="opp-desc">{{this.description}}</p>
+        {{#if this.note}}<em class="opp-note">{{this.note}}</em>{{/if}}
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+  {{else}}
+  <p class="opp-empty">No specific opportunities defined for this type.</p>
+  {{/if}}
+</section>
+{{/inline}}

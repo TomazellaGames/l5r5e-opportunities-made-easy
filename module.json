@@ -1,0 +1,13 @@
+{
+  "id": "l5r5e-opportunities-made-easy",
+  "title": "L5R5e Opportunities Made Easy",
+  "description": "Shows relevant opportunity options when rolling in Legend of the Five Rings 5e.",
+  "version": "1.0.0",
+  "manifest": "https://raw.githubusercontent.com/TomazellaGames/l5r5e-opportunities-made-easy/main/module.json",
+  "download": "https://github.com/TomazellaGames/l5r5e-opportunities-made-easy/releases/latest/download/l5r5e-opportunities-made-easy.zip",
+  "authors": [{ "name": "Jeferson Tomazella", "email": "jefersonkingthor@gmail.com" }],
+  "compatibility": { "minimum": "14", "verified": "14" },
+  "relationships": { "systems": [{ "id": "l5r5e" }] },
+  "esmodules": ["scripts/main.js"],
+  "styles": ["styles/opportunities.css"]
+}
