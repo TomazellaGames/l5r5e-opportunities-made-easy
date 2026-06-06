@@ -4,14 +4,11 @@ import { OpportunitiesApp } from "./opportunities-app.js";
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
 Hooks.once("init", () => {
-  // Block helper: repeat content N times (used to render opportunity cost dots)
   Handlebars.registerHelper("times", function (n, options) {
     let out = "";
     for (let i = 0; i < n; i++) out += options.fn(this);
     return out;
   });
-
-  loadTemplates([`modules/${MODULE_ID}/templates/opportunities-window.hbs`]);
 });
 
 /** Guard: only inject the button on genuine L5R dice rolls */
