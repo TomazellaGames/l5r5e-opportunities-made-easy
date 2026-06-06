@@ -190,18 +190,13 @@
    Opportunities Reference — Sidebar Tab
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Panel is hidden by default; shown when .active is set by our click handler.
-   Foundry's own .sidebar-tab rule may also control display — we override
-   it here with higher specificity so the injected panel works in all versions. */
+/* Foundry's ApplicationV2 sidebar system controls show/hide automatically.
+   We only need layout: fill height with filters pinned at top, list scrolling. */
 #l5r5e-opportunities-reference {
-  display: none !important;
+  display: flex;
+  flex-direction: column;
   padding: 0;
   overflow: hidden;
-}
-
-#l5r5e-opportunities-reference.active {
-  display: flex !important;
-  flex-direction: column;
   height: 100%;
 }
 

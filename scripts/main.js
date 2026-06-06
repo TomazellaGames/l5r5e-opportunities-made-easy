@@ -1,5 +1,6 @@
 // scripts/main.js
-import { OpportunitiesApp } from "./opportunities-app.js";
+import { OpportunitiesApp }       from "./opportunities-app.js";
+import { OpportunitiesReference } from "./opportunities-reference.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
@@ -12,95 +13,32 @@ Hooks.once("init", () => {
     return out;
   });
 
+  // ── Register sidebar tab (Foundry v14 ApplicationV2 approach) ──
+  // Step 1: map the tab key to our class
+  CONFIG.ui.l5r5eopps = OpportunitiesReference;
+
+  // Step 2: add the nav button entry to Sidebar.TABS so the icon appears.
+  // This is required in v14 – CONFIG.ui alone no longer creates the nav button.
+  // We insert just before "settings" so our tab sits at the end before the gear.
+  const Sidebar = foundry.applications.sidebar.Sidebar;
+  if (Sidebar?.TABS) {
+    const settingsEntry = Sidebar.TABS.settings;
+    if (settingsEntry) {
+      delete Sidebar.TABS.settings;
+    }
+    Sidebar.TABS.l5r5eopps = {
+      icon:    "fa-solid fa-scroll",
+      tooltip: "Opportunities Reference",
+    };
+    if (settingsEntry) {
+      Sidebar.TABS.settings = settingsEntry;
+    }
+  }
+
   loadTemplates([
     `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
     `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
   ]);
-});
-
-// ── Sidebar tab ───────────────────────────────────────────────────────────────
-// We physically inject a tab button + panel via renderSidebar rather than
-// relying on CONFIG.ui / SidebarTab, both of which changed in Foundry v14.
-// The guard at the top prevents re-injection on repeated sidebar renders.
-
-Hooks.on("renderSidebar", async (_sidebar, html) => {
-  const root  = html instanceof jQuery ? html[0] : html;
-  const aside = root.id === "sidebar"
-    ? root
-    : (root.closest?.("#sidebar") ?? document.getElementById("sidebar"));
-  if (!aside) return;
-
-  const tabNav = aside.querySelector("nav.tabs") ?? aside.querySelector(".tabs");
-  if (!tabNav) return;
-
-  // Guard: only inject once per sidebar lifetime
-  if (aside.querySelector('[data-tab="l5r5eopps"]')) return;
-
-  // ── 1. Tab nav button (injected synchronously) ──
-  const tabBtn = document.createElement("a");
-  tabBtn.className = "item";
-  tabBtn.dataset.tab = "l5r5eopps";
-  tabBtn.title = "Opportunities Reference";
-  tabBtn.setAttribute("data-tooltip", "Opportunities Reference");
-  tabBtn.innerHTML = `<i class="fas fa-scroll"></i>`;
-  tabNav.appendChild(tabBtn);
-
-  // ── 2. Panel shell (injected synchronously so the section exists before async) ──
-  const panel = document.createElement("section");
-  panel.id = "l5r5e-opportunities-reference";
-  panel.className = `tab sidebar-tab ${MODULE_ID}`;
-  panel.dataset.tab = "l5r5eopps";
-  panel.innerHTML = `<p style="padding:1rem;font-style:italic;">Loading…</p>`;
-
-  const lastSection =
-    aside.querySelector(".sidebar-tab:last-of-type") ??
-    aside.querySelector(".tab:last-of-type") ??
-    tabNav;
-  lastSection.insertAdjacentElement("afterend", panel);
-
-  // ── 3. Tab switching (sync, so clicking the button works immediately) ──
-  tabBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (tabBtn.classList.contains("active")) return;
-
-    aside.querySelectorAll(".tabs .item.active").forEach(el => el.classList.remove("active"));
-    aside.querySelectorAll(".sidebar-tab.active, .tab.active").forEach(el => el.classList.remove("active"));
-
-    tabBtn.classList.add("active");
-    panel.classList.add("active");
-
-    if (aside.classList.contains("collapsed") && typeof ui?.sidebar?.expand === "function") {
-      ui.sidebar.expand();
-    }
-  });
-
-  // Deactivate our panel when any other sidebar tab is clicked
-  aside.querySelectorAll(".tabs .item").forEach(item => {
-    if (item === tabBtn) return;
-    item.addEventListener("click", () => {
-      tabBtn.classList.remove("active");
-      panel.classList.remove("active");
-    });
-  });
-
-  // ── 4. Fill panel content (async, non-blocking) ──
-  try {
-    const { buildReferenceEntries, activateReferenceListeners } =
-      await import("./opportunities-reference.js");
-
-    const templateHtml = await renderTemplate(
-      `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
-      { entries: buildReferenceEntries() },
-    );
-
-    panel.innerHTML = templateHtml;
-    activateReferenceListeners(panel);
-  } catch (err) {
-    console.error("L5R5e Opportunities | Reference panel render failed:", err);
-    panel.innerHTML =
-      `<p style="padding:1rem;color:tomato;">Opportunities Reference failed to load — see console.</p>`;
-  }
 });
 
 // ── Guard: only inject the button on genuine L5R dice rolls ───────────────────
@@ -125,6 +63,7 @@ function makeButton(message) {
 }
 
 // ── Chat message card ─────────────────────────────────────────────────────────
+// In Foundry v14 renderChatMessageHTML passes a raw HTMLElement, not jQuery.
 Hooks.on("renderChatMessageHTML", (message, html, _data) => {
   if (!isL5RRoll(message)) return;
   const root   = html instanceof HTMLElement ? html : html[0];
@@ -134,14 +73,19 @@ Hooks.on("renderChatMessageHTML", (message, html, _data) => {
 });
 
 // ── Roll & Keep dialog ────────────────────────────────────────────────────────
+// Foundry auto-fires renderRollnKeepDialog for RollnKeepDialog (FormApplication).
+// The html argument is jQuery; the dialog re-renders on every die drag, so we
+// guard against double-injection with a querySelector check.
 Hooks.on("renderRollnKeepDialog", (app, html, _data) => {
   const message = app.message;
   if (!message || !isL5RRoll(message)) return;
 
   const root = html instanceof jQuery ? html[0] : html;
 
+  // Prevent duplicate buttons on re-renders caused by dice dragging
   if (root.querySelector(`.${MODULE_ID}-btn`)) return;
 
+  // Prefer inserting after the #finalize button; fall back to the .rnk-ct section
   const anchor = root.querySelector("#finalize") ?? root.querySelector(".rnk-ct");
   if (!anchor) return;
   anchor.insertAdjacentElement(
