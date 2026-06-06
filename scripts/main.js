@@ -6,12 +6,35 @@ const MODULE_ID = "l5r5e-opportunities-made-easy";
 
 // ── Initialise ────────────────────────────────────────────────────────────────
 Hooks.once("init", () => {
-  // Block helper: repeat content N times (used to render opportunity cost dots)
   Handlebars.registerHelper("times", function (n, options) {
     let out = "";
     for (let i = 0; i < n; i++) out += options.fn(this);
     return out;
   });
+
+  // ── Sidebar tab registration ──
+  // A stub class with empty PARTS so Foundry is satisfied but nothing renders
+  // in the sidebar panel.  The actual reference content opens in a floating
+  // window when the user clicks the tab button (see renderSidebar hook below).
+  const { HandlebarsApplicationMixin } = foundry.applications.api;
+  const { AbstractSidebarTab }         = foundry.applications.sidebar;
+
+  class L5r5eOppsTab extends HandlebarsApplicationMixin(AbstractSidebarTab) {
+    static tabName        = "l5r5eopps";
+    static DEFAULT_OPTIONS = { id: "l5r5e-opportunities-tab" };
+    static PARTS          = {};
+    async _prepareContext() { return {}; }
+  }
+
+  CONFIG.ui.l5r5eopps = L5r5eOppsTab;
+
+  const Sidebar = foundry.applications.sidebar.Sidebar;
+  if (Sidebar?.TABS) {
+    const settingsEntry = Sidebar.TABS.settings;
+    if (settingsEntry) delete Sidebar.TABS.settings;
+    Sidebar.TABS.l5r5eopps = { icon: "fa-solid fa-scroll", tooltip: "Opportunities Reference" };
+    if (settingsEntry) Sidebar.TABS.settings = settingsEntry;
+  }
 
   loadTemplates([
     `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
@@ -19,38 +42,24 @@ Hooks.once("init", () => {
   ]);
 });
 
-// ── Sidebar button ────────────────────────────────────────────────────────────
-// Inject a nav button into the sidebar that opens/closes the reference window.
-// We do this via renderSidebar rather than CONFIG.ui/Sidebar.TABS to avoid
-// ApplicationV2 panel rendering issues.
-Hooks.on("renderSidebar", (_app, element) => {
-  const sidebar = element instanceof HTMLElement
-    ? element
-    : document.getElementById("sidebar");
+// ── Sidebar button intercept ──────────────────────────────────────────────────
+// After the sidebar renders, find our native tab button (created by Sidebar.TABS)
+// and attach a capture-phase listener.  Capture runs before Foundry's own
+// bubble-phase tab-switch handler, so stopImmediatePropagation keeps the
+// sidebar panel unchanged while our floating window opens instead.
+Hooks.on("renderSidebar", () => {
+  const sidebar = document.getElementById("sidebar");
   if (!sidebar) return;
 
-  // Run only once (sidebar re-renders rarely, but guard anyway)
-  if (sidebar.querySelector(".l5r5e-opp-ref-btn")) return;
+  const ourBtn = sidebar.querySelector('[data-tab="l5r5eopps"]');
+  if (!ourBtn || ourBtn._l5r5eHandled) return;
+  ourBtn._l5r5eHandled = true;
 
-  const tabNav = sidebar.querySelector("nav.tabs");
-  if (!tabNav) return;
-
-  const btn = document.createElement("a");
-  btn.className = "item l5r5e-opp-ref-btn";
-  btn.setAttribute("data-tooltip", "Opportunities Reference");
-  btn.setAttribute("aria-label", "Opportunities Reference");
-  btn.innerHTML = `<i class="fa-solid fa-scroll"></i>`;
-
-  // Place just before the settings gear so our button sits near the end
-  const settingsBtn = tabNav.querySelector("[data-tab='settings']");
-  if (settingsBtn) settingsBtn.insertAdjacentElement("beforebegin", btn);
-  else tabNav.appendChild(btn);
-
-  btn.addEventListener("click", (e) => {
+  ourBtn.addEventListener("click", (e) => {
+    e.stopImmediatePropagation();
     e.preventDefault();
-    e.stopPropagation();
     OpportunitiesReferenceWindow.toggle();
-  });
+  }, true); // capture phase — runs before Foundry's bubble-phase handler
 });
 
 // ── Guard: only inject the button on genuine L5R dice rolls ───────────────────
@@ -75,7 +84,6 @@ function makeButton(message) {
 }
 
 // ── Chat message card ─────────────────────────────────────────────────────────
-// In Foundry v14 renderChatMessageHTML passes a raw HTMLElement, not jQuery.
 Hooks.on("renderChatMessageHTML", (message, html, _data) => {
   if (!isL5RRoll(message)) return;
   const root   = html instanceof HTMLElement ? html : html[0];
@@ -85,19 +93,13 @@ Hooks.on("renderChatMessageHTML", (message, html, _data) => {
 });
 
 // ── Roll & Keep dialog ────────────────────────────────────────────────────────
-// Foundry auto-fires renderRollnKeepDialog for RollnKeepDialog (FormApplication).
-// The html argument is jQuery; the dialog re-renders on every die drag, so we
-// guard against double-injection with a querySelector check.
 Hooks.on("renderRollnKeepDialog", (app, html, _data) => {
   const message = app.message;
   if (!message || !isL5RRoll(message)) return;
 
   const root = html instanceof jQuery ? html[0] : html;
-
-  // Prevent duplicate buttons on re-renders caused by dice dragging
   if (root.querySelector(`.${MODULE_ID}-btn`)) return;
 
-  // Prefer inserting after the #finalize button; fall back to the .rnk-ct section
   const anchor = root.querySelector("#finalize") ?? root.querySelector(".rnk-ct");
   if (!anchor) return;
   anchor.insertAdjacentElement(
