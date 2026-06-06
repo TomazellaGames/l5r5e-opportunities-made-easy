@@ -4,6 +4,34 @@ import { OpportunitiesReferenceWindow } from "./opportunities-reference.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
+// ── Sidebar panel button injection ────────────────────────────────────────────
+// Defined at module scope so it's accessible from every hook below.
+function injectOppsButton(el) {
+  if (!el || el.querySelector(".opp-sidebar-tab")) return;
+  const wrapper = document.createElement("div");
+  wrapper.className = "opp-sidebar-tab";
+  const btn = document.createElement("button");
+  btn.type      = "button";
+  btn.className = "opp-ref-open-btn";
+  btn.innerHTML = `<i class="fa-solid fa-scroll"></i> Opportunities Reference`;
+  btn.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
+  wrapper.appendChild(btn);
+  el.appendChild(wrapper);
+}
+
+// Strategy A: ApplicationV2 fires "render<ClassName>" when our tab app renders.
+Hooks.on("renderL5r5eOppsTab", (app, element) => {
+  injectOppsButton(element instanceof HTMLElement ? element : app.element);
+});
+
+// Strategy B: Sidebar re-renders (e.g. on tab switch).
+// ui.l5r5eopps is the live instance of our tab app set by Foundry.
+Hooks.on("renderSidebar", () => {
+  injectOppsButton(
+    ui.l5r5eopps?.element ?? document.getElementById("l5r5e-opportunities-tab"),
+  );
+});
+
 // ── Initialise ────────────────────────────────────────────────────────────────
 Hooks.once("init", () => {
   Handlebars.registerHelper("times", function (n, options) {
@@ -12,37 +40,23 @@ Hooks.once("init", () => {
     return out;
   });
 
-  // ── Sidebar tab registration ──
-  // A stub class whose only job is to render the "Open Opportunities Reference"
-  // button inside the sidebar panel.  Clicking the button opens the floating
-  // reference window (OpportunitiesReferenceWindow).
   const { HandlebarsApplicationMixin } = foundry.applications.api;
   const { AbstractSidebarTab }         = foundry.applications.sidebar;
 
+  // Stub sidebar tab — empty PARTS so nothing renders via the ApplicationV2
+  // template system (which positions content outside the panel in v14).
+  // Content is injected directly via injectOppsButton() in _onRender and
+  // the hooks above.
   class L5r5eOppsTab extends HandlebarsApplicationMixin(AbstractSidebarTab) {
     static tabName        = "l5r5eopps";
     static DEFAULT_OPTIONS = { id: "l5r5e-opportunities-tab" };
-    static PARTS          = {}; // empty — template PARTS render outside the panel in v14
+    static PARTS          = {};
     async _prepareContext() { return {}; }
 
-    // _onRender fires after every render() even with empty PARTS.
-    // We inject the button directly into this.element (the sidebar panel element)
-    // rather than relying on PARTS, which positions content outside the sidebar.
+    // Strategy C: direct injection in the class lifecycle hook.
     _onRender(_context, _options) {
       super._onRender(_context, _options);
-      if (this.element.querySelector(".opp-sidebar-tab")) return;
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "opp-sidebar-tab";
-
-      const btn = document.createElement("button");
-      btn.type      = "button";
-      btn.className = "opp-ref-open-btn";
-      btn.innerHTML = `<i class="fa-solid fa-scroll"></i> Opportunities Reference`;
-      btn.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
-
-      wrapper.appendChild(btn);
-      this.element.appendChild(wrapper);
+      injectOppsButton(this.element);
     }
   }
 
