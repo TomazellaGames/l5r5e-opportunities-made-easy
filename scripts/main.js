@@ -13,17 +13,27 @@ Hooks.once("init", () => {
   });
 
   // ── Sidebar tab registration ──
-  // A stub class with empty PARTS so Foundry is satisfied but nothing renders
-  // in the sidebar panel.  The actual reference content opens in a floating
-  // window when the user clicks the tab button (see renderSidebar hook below).
+  // A stub class whose only job is to render the "Open Opportunities Reference"
+  // button inside the sidebar panel.  Clicking the button opens the floating
+  // reference window (OpportunitiesReferenceWindow).
   const { HandlebarsApplicationMixin } = foundry.applications.api;
   const { AbstractSidebarTab }         = foundry.applications.sidebar;
 
   class L5r5eOppsTab extends HandlebarsApplicationMixin(AbstractSidebarTab) {
     static tabName        = "l5r5eopps";
     static DEFAULT_OPTIONS = { id: "l5r5e-opportunities-tab" };
-    static PARTS          = {};
+    static PARTS          = {
+      content: {
+        template: `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
+        root: true,
+      },
+    };
     async _prepareContext() { return {}; }
+    _onRender(_context, _options) {
+      super._onRender(_context, _options);
+      this.element.querySelector(".opp-ref-open-btn")
+        ?.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
+    }
   }
 
   CONFIG.ui.l5r5eopps = L5r5eOppsTab;
@@ -39,27 +49,8 @@ Hooks.once("init", () => {
   loadTemplates([
     `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
     `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
+    `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
   ]);
-});
-
-// ── Sidebar button intercept ──────────────────────────────────────────────────
-// After the sidebar renders, find our native tab button (created by Sidebar.TABS)
-// and attach a capture-phase listener.  Capture runs before Foundry's own
-// bubble-phase tab-switch handler, so stopImmediatePropagation keeps the
-// sidebar panel unchanged while our floating window opens instead.
-Hooks.on("renderSidebar", () => {
-  const sidebar = document.getElementById("sidebar");
-  if (!sidebar) return;
-
-  const ourBtn = sidebar.querySelector('[data-tab="l5r5eopps"]');
-  if (!ourBtn || ourBtn._l5r5eHandled) return;
-  ourBtn._l5r5eHandled = true;
-
-  ourBtn.addEventListener("click", (e) => {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    OpportunitiesReferenceWindow.toggle();
-  }, true); // capture phase — runs before Foundry's bubble-phase handler
 });
 
 // ── Guard: only inject the button on genuine L5R dice rolls ───────────────────

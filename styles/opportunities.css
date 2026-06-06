@@ -1,6 +1,34 @@
-/* ── Sidebar scroll-icon button (opens reference floating window) ── */
-.l5r5e-opp-ref-btn {
+/* ── Sidebar tab panel ── */
+.opp-sidebar-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.opp-ref-open-btn {
   cursor: pointer;
+  padding: 0.5rem 1rem;
+  color: rgba(255, 255, 255, 1);
+  background: linear-gradient(
+    rgba(95, 40, 65, 1),
+    rgba(65, 25, 40, 1),
+    rgba(95, 40, 65, 1)
+  );
+  border-image: url("../systems/l5r5e/assets/ui/macro-button.webp") 10 repeat;
+  border-image-width: 0.5rem;
+  border-image-outset: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.opp-ref-open-btn:hover {
+  background: linear-gradient(
+    rgba(65, 20, 15, 0.75),
+    rgba(35, 10, 5, 0.75),
+    rgba(65, 20, 15, 0.75)
+  );
 }
 
 /* ── Opportunities button injected into chat cards and the RnK dialog ── */
