@@ -3,8 +3,6 @@ import { OPPORTUNITIES } from "./data/opportunities.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
-const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
-
 const INVOCATION_TECH_TYPES = new Set(["invocation", "inversion"]);
 
 const RING_LABELS = {
@@ -31,7 +29,7 @@ const INVOCATION_RING_LABELS = {
   void:  "Void Inversions",
 };
 
-export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) {
+export class OpportunitiesApp extends Application {
 
   static #instances = new Map();
 
@@ -41,38 +39,35 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
       existing.close();
       return;
     }
-    new OpportunitiesApp(message).render();
+    new OpportunitiesApp(message).render(true);
   }
 
   #message;
   #roll;
 
   constructor(message) {
-    // Pass unique id per chat message so multiple windows can coexist
-    super({ id: `${MODULE_ID}-${message.id}` });
+    super();
     this.#message = message;
     this.#roll    = message.rolls?.[0] ?? null;
     OpportunitiesApp.#instances.set(message.id, this);
   }
 
-  static DEFAULT_OPTIONS = {
-    classes: ["l5r5e", MODULE_ID],
-    window: {
+  get id() {
+    return `${MODULE_ID}-${this.#message.id}`;
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes:   ["l5r5e", MODULE_ID],
+      template:  `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
       title:     "Opportunities",
+      width:     520,
+      height:    "auto",
       resizable: true,
-    },
-    position: {
-      width: 520,
-    },
-  };
+    });
+  }
 
-  static PARTS = {
-    content: {
-      template: `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
-    },
-  };
-
-  async _prepareContext(_options) {
+  async getData() {
     const l5r5e      = this.#roll?.l5r5e ?? {};
     const ring       = l5r5e.stance     || null;
     const item       = l5r5e.item       || null;
@@ -83,7 +78,8 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
     const isInvocation = INVOCATION_TECH_TYPES.has(techType);
     const ringLabel    = ring ? (RING_LABELS[ring] ?? ring) : null;
 
-    let activeOpps  = [];
+    // Resolve current-roll opportunities and label
+    let activeOpps = [];
     let activeTitle = null;
 
     if (isInvocation && ring) {
@@ -94,12 +90,13 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
       activeTitle = `${SKILL_GROUP_LABELS[skillCatId] ?? skillCatId} — ${ringLabel}`;
     }
 
+    // Build all category tabs (always present so players can browse)
     const skillGroupTabs = Object.entries(SKILL_GROUP_LABELS).map(([id, label]) => ({
       id,
       label,
       sectionTitle: ring ? `${label} — ${ringLabel}` : label,
-      opps:         ring ? (OPPORTUNITIES.skillGroups[id]?.[ring] ?? []) : [],
-      isCurrent:    id === skillCatId && !isInvocation,
+      opps: ring ? (OPPORTUNITIES.skillGroups[id]?.[ring] ?? []) : [],
+      isCurrent: id === skillCatId && !isInvocation,
     }));
 
     const invocationTab = {
@@ -111,20 +108,20 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
     };
 
     const shadowlandsTab = {
-      shadowlandsTitle:  ringLabel ? `In the Shadowlands — ${ringLabel}`     : "In the Shadowlands",
-      whileTaintedTitle: ringLabel ? `While Tainted — ${ringLabel}`           : "While Tainted",
-      againstTitle:      ringLabel ? `Against Tainted Threats — ${ringLabel}` : "Against Tainted Threats",
-      initiativeTitle:   ringLabel ? `Initiative Check — ${ringLabel}`        : "Initiative Check",
-      shadowlands:     ring ? (OPPORTUNITIES.shadowlands[ring]     ?? []) : [],
-      whileTainted:    ring ? (OPPORTUNITIES.whileTainted[ring]    ?? []) : [],
-      againstTainted:  ring ? (OPPORTUNITIES.againstTainted[ring]  ?? []) : [],
-      initiativeCheck: ring ? (OPPORTUNITIES.initiativeCheck[ring] ?? []) : [],
+      shadowlandsTitle:  ringLabel ? `In the Shadowlands — ${ringLabel}`      : "In the Shadowlands",
+      whileTaintedTitle: ringLabel ? `While Tainted — ${ringLabel}`            : "While Tainted",
+      againstTitle:      ringLabel ? `Against Tainted Threats — ${ringLabel}`  : "Against Tainted Threats",
+      initiativeTitle:   ringLabel ? `Initiative Check — ${ringLabel}`         : "Initiative Check",
+      shadowlands:    ring ? (OPPORTUNITIES.shadowlands[ring]    ?? []) : [],
+      whileTainted:   ring ? (OPPORTUNITIES.whileTainted[ring]   ?? []) : [],
+      againstTainted: ring ? (OPPORTUNITIES.againstTainted[ring] ?? []) : [],
+      initiativeCheck:ring ? (OPPORTUNITIES.initiativeCheck[ring]?? []) : [],
     };
 
     return {
-      oppCount: l5r5e.summary?.opportunity ?? 0,
+      oppCount:    l5r5e.summary?.opportunity ?? 0,
       ring,
-      generic:  OPPORTUNITIES.generic,
+      generic:     OPPORTUNITIES.generic,
       activeTitle,
       activeOpps,
       skillGroupTabs,
@@ -133,21 +130,23 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
     };
   }
 
-  _onRender(_context, _options) {
-    super._onRender?.(_context, _options);
-    this.element.querySelectorAll(".opp-tab").forEach(tab => {
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = html instanceof jQuery ? html[0] : html;
+
+    root.querySelectorAll(".opp-tab").forEach(tab => {
       tab.addEventListener("click", () => {
         const id = tab.dataset.tab;
-        this.element.querySelectorAll(".opp-tab")
-          .forEach(t => t.classList.toggle("active", t.dataset.tab === id));
-        this.element.querySelectorAll(".opp-panel")
-          .forEach(p => p.classList.toggle("active", p.dataset.tab === id));
+        root.querySelectorAll(".opp-tab").forEach(t =>
+          t.classList.toggle("active", t.dataset.tab === id));
+        root.querySelectorAll(".opp-panel").forEach(p =>
+          p.classList.toggle("active", p.dataset.tab === id));
       });
     });
   }
 
-  async _onClose(_options) {
-    await super._onClose?.(_options);
+  async _onClose(options) {
+    await super._onClose(options);
     OpportunitiesApp.#instances.delete(this.#message.id);
   }
 }

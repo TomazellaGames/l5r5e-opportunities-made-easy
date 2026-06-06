@@ -1,73 +1,26 @@
 // scripts/main.js
-import { OpportunitiesApp }            from "./opportunities-app.js";
-import { OpportunitiesReferenceWindow } from "./opportunities-reference.js";
+import { OpportunitiesApp } from "./opportunities-app.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
-// ── Initialise ────────────────────────────────────────────────────────────────
 Hooks.once("init", () => {
+  // Block helper: repeat content N times (used to render opportunity cost dots)
   Handlebars.registerHelper("times", function (n, options) {
     let out = "";
     for (let i = 0; i < n; i++) out += options.fn(this);
     return out;
   });
 
-  const { HandlebarsApplicationMixin } = foundry.applications.api;
-  const { AbstractSidebarTab }         = foundry.applications.sidebar;
-
-  class L5r5eOppsTab extends HandlebarsApplicationMixin(AbstractSidebarTab) {
-    static tabName        = "l5r5eopps";
-    static DEFAULT_OPTIONS = {
-      id:      "l5r5e-opportunities-tab",
-      classes: ["l5r5e-opportunities-made-easy"],
-      window:  { title: "Opportunities Reference", icon: "fa-solid fa-scroll" },
-    };
-    static PARTS = {
-      content: {
-        template: `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
-        root: true,
-      },
-    };
-
-    async _prepareContext() { return {}; }
-
-    _onRender(_context, _options) {
-      super._onRender?.(_context, _options);
-      this.element.querySelector(".opp-ref-open-btn")
-        ?.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
-    }
-  }
-
-  CONFIG.ui.l5r5eopps = L5r5eOppsTab;
-
-  const Sidebar = foundry.applications.sidebar.Sidebar;
-  if (Sidebar?.TABS) {
-    const settingsEntry = Sidebar.TABS.settings;
-    if (settingsEntry) delete Sidebar.TABS.settings;
-    Sidebar.TABS.l5r5eopps = { icon: "fa-solid fa-scroll", tooltip: "Opportunities Reference" };
-    if (settingsEntry) Sidebar.TABS.settings = settingsEntry;
-  }
-
-  loadTemplates([
-    `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
-    `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
-    `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
-  ]);
+  loadTemplates([`modules/${MODULE_ID}/templates/opportunities-window.hbs`]);
 });
 
-// Foundry v14 does not auto-render CONFIG.ui sidebar tab apps.
-// Trigger our tab's render when the sidebar renders (same pattern as Dice So Nice).
-Hooks.on("renderSidebar", () => {
-  ui.l5r5eopps?.render({ force: false });
-});
-
-// ── Guard: only inject the button on genuine L5R dice rolls ───────────────────
+/** Guard: only inject the button on genuine L5R dice rolls */
 function isL5RRoll(message) {
   const roll = message?.rolls?.[0];
   return !!roll?.l5r5e?.dicesTypes?.l5r;
 }
 
-// ── Build the Opportunities button ────────────────────────────────────────────
+/** Build the Opportunities button as a plain DOM element (works in both hook contexts) */
 function makeButton(message) {
   const btn = document.createElement("button");
   btn.type      = "button";
@@ -83,6 +36,7 @@ function makeButton(message) {
 }
 
 // ── Chat message card ─────────────────────────────────────────────────────────
+// In Foundry v14 renderChatMessageHTML passes a raw HTMLElement, not jQuery.
 Hooks.on("renderChatMessageHTML", (message, html, _data) => {
   if (!isL5RRoll(message)) return;
   const root   = html instanceof HTMLElement ? html : html[0];
@@ -92,13 +46,19 @@ Hooks.on("renderChatMessageHTML", (message, html, _data) => {
 });
 
 // ── Roll & Keep dialog ────────────────────────────────────────────────────────
+// Foundry auto-fires renderRollnKeepDialog for RollnKeepDialog (FormApplication).
+// The html argument is jQuery; the dialog re-renders on every die drag, so we
+// guard against double-injection with a querySelector check.
 Hooks.on("renderRollnKeepDialog", (app, html, _data) => {
   const message = app.message;
   if (!message || !isL5RRoll(message)) return;
 
   const root = html instanceof jQuery ? html[0] : html;
+
+  // Prevent duplicate buttons on re-renders caused by dice dragging
   if (root.querySelector(`.${MODULE_ID}-btn`)) return;
 
+  // Prefer inserting after the #finalize button; fall back to the .rnk-ct section
   const anchor = root.querySelector("#finalize") ?? root.querySelector(".rnk-ct");
   if (!anchor) return;
   anchor.insertAdjacentElement(
