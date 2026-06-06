@@ -3,8 +3,31 @@ import { OPPORTUNITIES } from "./data/opportunities.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
-// Skills that indicate a conflict/martial context
-const MARTIAL_SKILLS = new Set(["melee", "ranged", "unarmed", "fitness", "tactics"]);
+const INVOCATION_TECH_TYPES = new Set(["invocation", "inversion"]);
+
+const RING_LABELS = {
+  air:   "Air",
+  earth: "Earth",
+  fire:  "Fire",
+  water: "Water",
+  void:  "Void",
+};
+
+const SKILL_GROUP_LABELS = {
+  artisan: "Artisan",
+  scholar: "Scholar",
+  social:  "Social",
+  trade:   "Trade",
+  martial: "Martial",
+};
+
+const INVOCATION_LABELS = {
+  air:   "Kaze (Air) Invocations",
+  earth: "Tsuchi (Earth) Invocations",
+  fire:  "Hitsu (Fire) Invocations",
+  water: "Mizu (Water) Invocations",
+  void:  "Void Inversions",
+};
 
 export class OpportunitiesApp extends Application {
 
@@ -31,7 +54,6 @@ export class OpportunitiesApp extends Application {
     OpportunitiesApp.#instances.set(message.id, this);
   }
 
-  // Give each instance a unique DOM id so multiple popups can coexist
   get id() {
     return `${MODULE_ID}-${this.#message.id}`;
   }
@@ -48,26 +70,36 @@ export class OpportunitiesApp extends Application {
   }
 
   async getData() {
-    const l5r5e   = this.#roll?.l5r5e ?? {};
-    const ring    = l5r5e.stance || null;
-    const item    = l5r5e.item   || null;
-    const isTech  = item?.type === "technique";
-    const techType = isTech ? (item.system?.type ?? null) : null;
+    const l5r5e     = this.#roll?.l5r5e ?? {};
+    const ring      = l5r5e.stance    || null;
+    const item      = l5r5e.item      || null;
+    const isTech    = item?.type === "technique";
+    const techType  = isTech ? (item.system?.type ?? null) : null;
+    const skillCatId = l5r5e.skillCatId || null;
 
-    const isConflict = !!l5r5e.target
-      || MARTIAL_SKILLS.has(l5r5e.skillId)
-      || l5r5e.skillCatId === "martial";
+    const isInvocation = INVOCATION_TECH_TYPES.has(techType);
+
+    let opps = [];
+    let sectionTitle = null;
+
+    if (isInvocation && ring) {
+      opps = OPPORTUNITIES.invocations[ring] ?? [];
+      sectionTitle = INVOCATION_LABELS[ring] ?? `${RING_LABELS[ring] ?? ring} Invocations`;
+    } else if (skillCatId && ring) {
+      opps = OPPORTUNITIES.skillGroups[skillCatId]?.[ring] ?? [];
+      const groupLabel = SKILL_GROUP_LABELS[skillCatId] ?? skillCatId;
+      const ringLabel  = RING_LABELS[ring] ?? ring;
+      sectionTitle = `${groupLabel} — ${ringLabel}`;
+    }
 
     return {
-      oppCount:  l5r5e.summary?.opportunity ?? 0,
+      oppCount:     l5r5e.summary?.opportunity ?? 0,
       ring,
-      isTech,
-      techType,
-      isConflict,
-      generic:   OPPORTUNITIES.generic,
-      ringOpps:  ring ? (OPPORTUNITIES.rings[ring] ?? []) : [],
-      conflict:  isConflict ? OPPORTUNITIES.conflict : [],
-      techOpps:  (isTech && techType) ? (OPPORTUNITIES.techniques[techType] ?? []) : [],
+      skillCatId,
+      isInvocation,
+      sectionTitle,
+      generic:      OPPORTUNITIES.generic,
+      opps,
     };
   }
 

@@ -4,25 +4,17 @@
     <i class="i_opportunity"></i> {{oppCount}} Opportunities Rolled
   </div>
 
-  {{> opp-section title="Generic Opportunities" entries=generic}}
+  {{> opp-section title="General Opportunities" entries=generic}}
 
-  {{#if ring}}
-    {{> opp-section title=(localizeRing ring) entries=ringOpps ringClass=ring}}
-  {{/if}}
-
-  {{#if isConflict}}
-    {{> opp-section title="Conflict Opportunities" entries=conflict}}
-  {{/if}}
-
-  {{#if isTech}}
-    {{> opp-section title=techType entries=techOpps techClass=techType}}
+  {{#if opps.length}}
+    {{> opp-section title=sectionTitle entries=opps ringClass=ring}}
   {{/if}}
 
 </div>
 
 {{!-- Inline partial: renders one collapsible opportunity section --}}
 {{#*inline "opp-section"}}
-<section class="opp-section {{ringClass}} {{techClass}}">
+<section class="opp-section {{ringClass}}">
   <h3>{{title}}</h3>
   {{#if entries.length}}
   <ul class="opp-list">
