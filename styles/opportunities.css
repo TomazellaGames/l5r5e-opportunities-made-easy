@@ -39,7 +39,63 @@
   color: rgb(90, 110, 90);
 }
 
-/* ── Individual section (Generic / Ring / Conflict / Technique) ── */
+/* ── Tab navigation ── */
+.l5r5e-opportunities-made-easy .opp-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(186, 187, 177, 0.3);
+}
+
+.l5r5e-opportunities-made-easy .opp-tab {
+  cursor: pointer;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px 3px 0 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(186, 187, 177, 0.6);
+  border: 1px solid transparent;
+  border-bottom: none;
+  user-select: none;
+  transition: color 0.15s, background 0.15s;
+}
+
+.l5r5e-opportunities-made-easy .opp-tab:hover {
+  color: rgba(186, 187, 177, 0.9);
+  background: rgba(95, 40, 65, 0.15);
+}
+
+/* Tab that matches the current roll's skill group */
+.l5r5e-opportunities-made-easy .opp-tab.current {
+  color: rgb(180, 140, 100);
+}
+
+/* Selected tab */
+.l5r5e-opportunities-made-easy .opp-tab.active {
+  color: rgb(210, 175, 130);
+  background: rgba(95, 40, 65, 0.35);
+  border-color: rgba(186, 187, 177, 0.3);
+  border-bottom-color: transparent;
+}
+
+/* ── Tab panels ── */
+.l5r5e-opportunities-made-easy .opp-panel {
+  display: none;
+}
+
+.l5r5e-opportunities-made-easy .opp-panel.active {
+  display: block;
+}
+
+.l5r5e-opportunities-made-easy .opp-empty-hint {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* ── Individual section (Generic / Ring / Skill Group) ── */
 .l5r5e-opportunities-made-easy .opp-section {
   margin-bottom: 0.6rem;
   border: 1px solid rgba(186, 187, 177, 0.5);

@@ -21,7 +21,7 @@ const SKILL_GROUP_LABELS = {
   martial: "Martial",
 };
 
-const INVOCATION_LABELS = {
+const INVOCATION_RING_LABELS = {
   air:   "Kaze (Air) Invocations",
   earth: "Tsuchi (Earth) Invocations",
   fire:  "Hitsu (Fire) Invocations",
@@ -31,10 +31,8 @@ const INVOCATION_LABELS = {
 
 export class OpportunitiesApp extends Application {
 
-  // messageId → OpportunitiesApp; used to toggle open/close on repeated clicks
   static #instances = new Map();
 
-  /** Open the popup for this message, or close it if already open. */
   static open(message) {
     const existing = OpportunitiesApp.#instances.get(message.id);
     if (existing) {
@@ -63,44 +61,76 @@ export class OpportunitiesApp extends Application {
       classes:   ["l5r5e", MODULE_ID],
       template:  `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
       title:     "Opportunities",
-      width:     500,
+      width:     520,
       height:    "auto",
       resizable: true,
     });
   }
 
   async getData() {
-    const l5r5e     = this.#roll?.l5r5e ?? {};
-    const ring      = l5r5e.stance    || null;
-    const item      = l5r5e.item      || null;
-    const isTech    = item?.type === "technique";
-    const techType  = isTech ? (item.system?.type ?? null) : null;
+    const l5r5e      = this.#roll?.l5r5e ?? {};
+    const ring       = l5r5e.stance     || null;
+    const item       = l5r5e.item       || null;
+    const isTech     = item?.type === "technique";
+    const techType   = isTech ? (item.system?.type ?? null) : null;
     const skillCatId = l5r5e.skillCatId || null;
 
     const isInvocation = INVOCATION_TECH_TYPES.has(techType);
+    const ringLabel    = ring ? (RING_LABELS[ring] ?? ring) : null;
 
-    let opps = [];
-    let sectionTitle = null;
+    // Resolve current-roll opportunities and label
+    let activeOpps = [];
+    let activeTitle = null;
 
     if (isInvocation && ring) {
-      opps = OPPORTUNITIES.invocations[ring] ?? [];
-      sectionTitle = INVOCATION_LABELS[ring] ?? `${RING_LABELS[ring] ?? ring} Invocations`;
+      activeOpps  = OPPORTUNITIES.invocations[ring] ?? [];
+      activeTitle = INVOCATION_RING_LABELS[ring] ?? `${ringLabel} Invocations`;
     } else if (skillCatId && ring) {
-      opps = OPPORTUNITIES.skillGroups[skillCatId]?.[ring] ?? [];
-      const groupLabel = SKILL_GROUP_LABELS[skillCatId] ?? skillCatId;
-      const ringLabel  = RING_LABELS[ring] ?? ring;
-      sectionTitle = `${groupLabel} — ${ringLabel}`;
+      activeOpps  = OPPORTUNITIES.skillGroups[skillCatId]?.[ring] ?? [];
+      activeTitle = `${SKILL_GROUP_LABELS[skillCatId] ?? skillCatId} — ${ringLabel}`;
     }
 
-    return {
-      oppCount:     l5r5e.summary?.opportunity ?? 0,
-      ring,
-      skillCatId,
-      isInvocation,
-      sectionTitle,
-      generic:      OPPORTUNITIES.generic,
-      opps,
+    // Build all category tabs (always present so players can browse)
+    const skillGroupTabs = Object.entries(SKILL_GROUP_LABELS).map(([id, label]) => ({
+      id,
+      label,
+      sectionTitle: ring ? `${label} — ${ringLabel}` : label,
+      opps: ring ? (OPPORTUNITIES.skillGroups[id]?.[ring] ?? []) : [],
+      isCurrent: id === skillCatId && !isInvocation,
+    }));
+
+    const invocationTab = {
+      id:           "invocations",
+      label:        "Invocations",
+      sectionTitle: ring ? (INVOCATION_RING_LABELS[ring] ?? `${ringLabel} Invocations`) : "Invocations",
+      opps:         ring ? (OPPORTUNITIES.invocations[ring] ?? []) : [],
+      isCurrent:    isInvocation,
     };
+
+    return {
+      oppCount:    l5r5e.summary?.opportunity ?? 0,
+      ring,
+      generic:     OPPORTUNITIES.generic,
+      activeTitle,
+      activeOpps,
+      skillGroupTabs,
+      invocationTab,
+    };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = html instanceof jQuery ? html[0] : html;
+
+    root.querySelectorAll(".opp-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const id = tab.dataset.tab;
+        root.querySelectorAll(".opp-tab").forEach(t =>
+          t.classList.toggle("active", t.dataset.tab === id));
+        root.querySelectorAll(".opp-panel").forEach(p =>
+          p.classList.toggle("active", p.dataset.tab === id));
+      });
+    });
   }
 
   async _onClose(options) {

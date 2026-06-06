@@ -4,15 +4,43 @@
     <i class="i_opportunity"></i> {{oppCount}} Opportunities Rolled
   </div>
 
-  {{> opp-section title="General Opportunities" entries=generic}}
+  <nav class="opp-tabs">
+    <a class="opp-tab active" data-tab="active">Active</a>
+    {{#each skillGroupTabs}}
+    <a class="opp-tab {{#if isCurrent}}current{{/if}}" data-tab="{{id}}">{{label}}</a>
+    {{/each}}
+    <a class="opp-tab {{#if invocationTab.isCurrent}}current{{/if}}" data-tab="invocations">Invocations</a>
+  </nav>
 
-  {{#if opps.length}}
-    {{> opp-section title=sectionTitle entries=opps ringClass=ring}}
-  {{/if}}
+  <div class="opp-panels">
+
+    {{!-- Active tab: generic + current roll context --}}
+    <div class="opp-panel active" data-tab="active">
+      {{> opp-section title="General Opportunities" entries=generic}}
+      {{#if activeOpps.length}}
+        {{> opp-section title=activeTitle entries=activeOpps ringClass=ring}}
+      {{else}}
+        <p class="opp-empty opp-empty-hint">Roll a skill check to see ring-specific opportunities here.</p>
+      {{/if}}
+    </div>
+
+    {{!-- One panel per skill group --}}
+    {{#each skillGroupTabs}}
+    <div class="opp-panel" data-tab="{{id}}">
+      {{> opp-section title=sectionTitle entries=opps ringClass=../ring}}
+    </div>
+    {{/each}}
+
+    {{!-- Invocations panel --}}
+    <div class="opp-panel" data-tab="invocations">
+      {{> opp-section title=invocationTab.sectionTitle entries=invocationTab.opps ringClass=ring}}
+    </div>
+
+  </div>
 
 </div>
 
-{{!-- Inline partial: renders one collapsible opportunity section --}}
+{{!-- Partial: one collapsible opportunity section --}}
 {{#*inline "opp-section"}}
 <section class="opp-section {{ringClass}}">
   <h3>{{title}}</h3>
@@ -30,7 +58,7 @@
     {{/each}}
   </ul>
   {{else}}
-  <p class="opp-empty">No specific opportunities defined for this type.</p>
+  <p class="opp-empty">No opportunities defined for this combination.</p>
   {{/if}}
 </section>
 {{/inline}}
