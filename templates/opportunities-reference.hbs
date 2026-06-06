@@ -1,0 +1,51 @@
+<div class="opp-ref-wrapper">
+
+  <div class="opp-ref-filters">
+    <div class="opp-ref-filter-row">
+      <span class="opp-ref-filter-label">Ring</span>
+      <div class="opp-ref-filter-group">
+        <button class="opp-ref-filter active" data-filter-type="ring" data-filter-value="">All</button>
+        <button class="opp-ref-filter ring-air"   data-filter-type="ring" data-filter-value="air">Air</button>
+        <button class="opp-ref-filter ring-earth" data-filter-type="ring" data-filter-value="earth">Earth</button>
+        <button class="opp-ref-filter ring-fire"  data-filter-type="ring" data-filter-value="fire">Fire</button>
+        <button class="opp-ref-filter ring-water" data-filter-type="ring" data-filter-value="water">Water</button>
+        <button class="opp-ref-filter ring-void"  data-filter-type="ring" data-filter-value="void">Void</button>
+      </div>
+    </div>
+    <div class="opp-ref-filter-row">
+      <span class="opp-ref-filter-label">Type</span>
+      <div class="opp-ref-filter-group">
+        <button class="opp-ref-filter active"     data-filter-type="situation" data-filter-value="">All</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="generic">General</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="artisan">Artisan</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="scholar">Scholar</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="social">Social</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="trade">Trade</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="martial">Martial</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="invocations">Invocations</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="shadowlands">Shadowlands</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="whileTainted">Tainted</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="againstTainted">vs Tainted</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="initiative">Initiative</button>
+      </div>
+    </div>
+  </div>
+
+  <ol class="opp-ref-list">
+    {{#each entries}}
+    <li class="opp-ref-entry" data-ring="{{ring}}" data-situation="{{situation}}">
+      <div class="opp-ref-header">
+        <span class="opp-ref-cost">{{#times cost}}<i class="i_opportunity"></i>{{/times}}</span>
+        <strong class="opp-ref-name">{{name}}</strong>
+        <div class="opp-ref-tags">
+          <span class="opp-ref-ring-tag {{ring}}">{{ringLabel}}</span>
+          <span class="opp-ref-sit-tag">{{situationLabel}}</span>
+        </div>
+      </div>
+      <p class="opp-ref-desc">{{description}}</p>
+      {{#if note}}<em class="opp-ref-note">{{note}}</em>{{/if}}
+    </li>
+    {{/each}}
+  </ol>
+
+</div>

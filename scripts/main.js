@@ -1,5 +1,6 @@
 // scripts/main.js
-import { OpportunitiesApp } from "./opportunities-app.js";
+import { OpportunitiesApp }       from "./opportunities-app.js";
+import { OpportunitiesReference } from "./opportunities-reference.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
@@ -11,7 +12,13 @@ Hooks.once("init", () => {
     return out;
   });
 
-  loadTemplates([`modules/${MODULE_ID}/templates/opportunities-window.hbs`]);
+  // Register sidebar tab
+  CONFIG.ui.l5r5eopps = OpportunitiesReference;
+
+  loadTemplates([
+    `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
+    `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
+  ]);
 });
 
 /** Guard: only inject the button on genuine L5R dice rolls */
