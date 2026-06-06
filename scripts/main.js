@@ -4,34 +4,6 @@ import { OpportunitiesReferenceWindow } from "./opportunities-reference.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
-// ── Sidebar panel button injection ────────────────────────────────────────────
-// Defined at module scope so it's accessible from every hook below.
-function injectOppsButton(el) {
-  if (!el || el.querySelector(".opp-sidebar-tab")) return;
-  const wrapper = document.createElement("div");
-  wrapper.className = "opp-sidebar-tab";
-  const btn = document.createElement("button");
-  btn.type      = "button";
-  btn.className = "opp-ref-open-btn";
-  btn.innerHTML = `<i class="fa-solid fa-scroll"></i> Opportunities Reference`;
-  btn.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
-  wrapper.appendChild(btn);
-  el.appendChild(wrapper);
-}
-
-// Strategy A: ApplicationV2 fires "render<ClassName>" when our tab app renders.
-Hooks.on("renderL5r5eOppsTab", (app, element) => {
-  injectOppsButton(element instanceof HTMLElement ? element : app.element);
-});
-
-// Strategy B: Sidebar re-renders (e.g. on tab switch).
-// ui.l5r5eopps is the live instance of our tab app set by Foundry.
-Hooks.on("renderSidebar", () => {
-  injectOppsButton(
-    ui.l5r5eopps?.element ?? document.getElementById("l5r5e-opportunities-tab"),
-  );
-});
-
 // ── Initialise ────────────────────────────────────────────────────────────────
 Hooks.once("init", () => {
   Handlebars.registerHelper("times", function (n, options) {
@@ -43,20 +15,26 @@ Hooks.once("init", () => {
   const { HandlebarsApplicationMixin } = foundry.applications.api;
   const { AbstractSidebarTab }         = foundry.applications.sidebar;
 
-  // Stub sidebar tab — empty PARTS so nothing renders via the ApplicationV2
-  // template system (which positions content outside the panel in v14).
-  // Content is injected directly via injectOppsButton() in _onRender and
-  // the hooks above.
   class L5r5eOppsTab extends HandlebarsApplicationMixin(AbstractSidebarTab) {
     static tabName        = "l5r5eopps";
-    static DEFAULT_OPTIONS = { id: "l5r5e-opportunities-tab" };
-    static PARTS          = {};
+    static DEFAULT_OPTIONS = {
+      id:      "l5r5e-opportunities-tab",
+      classes: ["l5r5e-opportunities-made-easy"],
+      window:  { title: "Opportunities Reference", icon: "fa-solid fa-scroll" },
+    };
+    static PARTS = {
+      content: {
+        template: `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
+        root: true,
+      },
+    };
+
     async _prepareContext() { return {}; }
 
-    // Strategy C: direct injection in the class lifecycle hook.
     _onRender(_context, _options) {
-      super._onRender(_context, _options);
-      injectOppsButton(this.element);
+      super._onRender?.(_context, _options);
+      this.element.querySelector(".opp-ref-open-btn")
+        ?.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
     }
   }
 
@@ -73,7 +51,14 @@ Hooks.once("init", () => {
   loadTemplates([
     `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
     `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
+    `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
   ]);
+});
+
+// Foundry v14 does not auto-render CONFIG.ui sidebar tab apps.
+// Trigger our tab's render when the sidebar renders (same pattern as Dice So Nice).
+Hooks.on("renderSidebar", () => {
+  ui.l5r5eopps?.render({ force: false });
 });
 
 // ── Guard: only inject the button on genuine L5R dice rolls ───────────────────
