@@ -1,2 +1,53 @@
-# l5r5e-opportunities-made-easy
-Show opportunity usage by action type when rolling on Legend of the Five Rings 5e
+# L5R5e Opportunities Made Easy
+
+A [Foundry VTT](https://foundryvtt.com/) module for the [Legend of the Five Rings 5th Edition](https://foundryvtt.com/packages/l5r5e) system.
+
+## What it does
+
+- **Context-aware opportunity list** - after a roll, an **Opportunities** button appears on the chat card and inside the Roll & Keep dialog. Click it to open a popup showing only the opportunities relevant to that roll's context (ring, skill group, technique type).
+- **Tabs by category** - the popup organizes opportunities into tabs: the roll's active context, plus Artisan, Scholar, Social, Trade, Martial, Invocations, and Shadowlands — so you can quickly browse without reading through irrelevant entries.
+- **Reference window** - a persistent, filterable reference window lists every opportunity in the game. Filter by ring (Air, Earth, Fire, Water, Void) and situation (skill groups, invocations, special circumstances).
+- **Opportunity cost display** - each opportunity shows its cost as filled dots, matching the L5R5e visual language.
+- **Works for techniques too** - detects invocation and inversion techniques and surfaces the correct Invocation opportunities automatically.
+
+## Compatibility
+
+| Foundry VTT | Status |
+|---|---|
+| v14 | Verified |
+
+Requires the **l5r5e** system.
+
+## Installation
+
+### From the Foundry module browser (recommended)
+
+1. Open Foundry VTT and go to **Configuration → Add-on Modules → Install Module**.
+2. Paste the following manifest URL into the search box at the bottom:
+   ```
+   https://raw.githubusercontent.com/TomazellaGames/l5r5e-opportunities-made-easy/main/module.json
+   ```
+3. Click **Install**.
+4. Enable the module in your world under **Configuration → Manage Modules**.
+
+### Manual install
+
+1. Download `l5r5e-opportunities-made-easy.zip` from the [latest release](https://github.com/TomazellaGames/l5r5e-opportunities-made-easy/releases/latest).
+2. Extract the zip into your Foundry `Data/modules/` folder so the path looks like:
+   ```
+   Data/modules/l5r5e-opportunities-made-easy/module.json
+   ```
+3. Restart Foundry and enable the module in your world.
+
+## Usage
+
+| What you want | How to do it |
+|---|---|
+| See opportunities for a roll | Click the **Opportunities** button on the chat card after rolling |
+| See opportunities while picking dice | Click the **Opportunities** button inside the Roll & Keep dialog |
+| Browse all opportunities | Click the **Opportunities** tab button (sidebar) to open the reference window |
+| Filter the reference list | Use the Ring and Situation dropdowns in the reference window |
+
+## Author
+
+Jeferson Tomazella - [GitHub](https://github.com/TomazellaGames)
