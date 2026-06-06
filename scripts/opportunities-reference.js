@@ -99,6 +99,7 @@ export class OpportunitiesReference extends HandlebarsApplicationMixin(AbstractS
   static PARTS = {
     content: {
       template: `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
+      root: true,
     },
   };
 
