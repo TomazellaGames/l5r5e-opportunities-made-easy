@@ -3,6 +3,8 @@ import { OPPORTUNITIES } from "./data/opportunities.js";
 
 const MODULE_ID = "l5r5e-opportunities-made-easy";
 
+const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
+
 const RING_LABELS = {
   any:   "Any",
   air:   "Air",
@@ -76,9 +78,9 @@ function activateFilters(root) {
   );
 }
 
-// ── Floating reference window ─────────────────────────────────────────────────
+// ── Floating reference window (ApplicationV2) ─────────────────────────────────
 
-export class OpportunitiesReferenceWindow extends Application {
+export class OpportunitiesReferenceWindow extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static #instance = null;
 
@@ -87,33 +89,41 @@ export class OpportunitiesReferenceWindow extends Application {
     if (OpportunitiesReferenceWindow.#instance?.rendered) {
       OpportunitiesReferenceWindow.#instance.close();
     } else {
-      (OpportunitiesReferenceWindow.#instance ??= new OpportunitiesReferenceWindow()).render(true);
+      (OpportunitiesReferenceWindow.#instance ??= new OpportunitiesReferenceWindow()).render();
     }
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id:        "l5r5e-opportunities-reference",
-      classes:   ["l5r5e-opportunities-made-easy"],
-      template:  `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
+  static DEFAULT_OPTIONS = {
+    id:      "l5r5e-opportunities-reference",
+    classes: ["l5r5e-opportunities-made-easy"],
+    window: {
       title:     "Opportunities Reference",
-      width:     520,
-      height:    620,
+      icon:      "fa-solid fa-scroll",
       resizable: true,
-    });
-  }
+    },
+    position: {
+      width:  520,
+      height: 620,
+    },
+  };
 
-  async getData() {
+  static PARTS = {
+    content: {
+      template: `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
+    },
+  };
+
+  async _prepareContext(_options) {
     return { entries: buildEntries() };
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-    activateFilters(html instanceof jQuery ? html[0] : html);
+  _onRender(_context, _options) {
+    super._onRender(_context, _options);
+    activateFilters(this.element);
   }
 
-  async close(options = {}) {
-    await super.close(options);
+  async _onClose(_options) {
+    await super._onClose(_options);
     OpportunitiesReferenceWindow.#instance = null;
   }
 }

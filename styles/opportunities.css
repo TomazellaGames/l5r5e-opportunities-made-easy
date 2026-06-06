@@ -192,16 +192,18 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Opportunities Reference — Floating Window
+   Opportunities Reference — Floating Window (ApplicationV2)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Target the window-content section so filters pin at top and list scrolls.
-   Scope to our app ID to avoid touching any other Foundry windows. */
-#l5r5e-opportunities-reference .window-content {
+/* ApplicationV2 wraps each PART in [data-application-part].
+   Make the content part fill remaining height so filters pin and list scrolls. */
+#l5r5e-opportunities-reference [data-application-part="content"] {
   display: flex;
   flex-direction: column;
-  padding: 0;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
+  padding: 0;
 }
 
 #l5r5e-opportunities-reference .opp-ref-wrapper {
