@@ -8,8 +8,8 @@ export const OPPORTUNITIES = Object.freeze({
     {
       id: "gen_assist_fail",
       cost: 1,
-      name: "Assist After Failure",
-      description: "If you failed, provide assistance to the next character trying to accomplish the same action.",
+      name: "Determine Approach",
+      description: "If you failed, determine the easiest way to accomplish the task you were attempting (skill and approach).",
     },
     {
       id: "gen_strife",
@@ -186,9 +186,9 @@ export const OPPORTUNITIES = Object.freeze({
         { id: "mar_air_defense",   cost: 2, name: "Evasive Posture",   description: "Increase the TN of the next Martial Arts [Ranged] check targeting you before the start of your next turn by 2." },
       ],
       earth: [
-        { id: "mar_ear_reassure",  cost: 1, name: "Reassure",          description: "Reassure another character in the scene with your presence, allowing them to remove 2 strife." },
-        { id: "mar_ear_careful",   cost: 1, name: "Careful Work",      description: "Act carefully to minimize consequences of failure or other dangers that could arise from the task.", note: "Scalable" },
-        { id: "mar_ear_recall",    cost: 2, name: "Sudden Recall",     description: "Suddenly recall an important piece of information; establish a preparatory action you took earlier." },
+        { id: "mar_ear_terrain",   cost: 1, name: "Ignore Terrain",    description: "During a Movement action, ignore one terrain quality of your choice." },
+        { id: "mar_ear_crit",      cost: 1, name: "Reduce Critical",   description: "Reduce the severity of the next critical strike you suffer before the start of your next turn by 1 per * spent this way.", note: "Scalable" },
+        { id: "mar_ear_disadv",    cost: 2, name: "Suppress Disadvantage", description: "Do not apply one of your disadvantages to checks until the end of your next turn." },
         { id: "mar_ear_striking",  cost: 1, name: "Striking as Earth", description: "Increase your physical resistance by 1 per * spent until the beginning of your next turn.", note: "Scalable" },
       ],
       fire: [
@@ -223,6 +223,7 @@ export const OPPORTUNITIES = Object.freeze({
       { id: "inv_air_detail",    cost: 1, name: "Notice Detail",      description: "Notice an interesting detail about a character in the scene, such as an advantage or disadvantage." },
       { id: "inv_air_range",     cost: 1, name: "Extended Range",     description: "Treat the maximum range of this technique as 1 higher per * spent.", note: "Scalable" },
       { id: "inv_air_subtle",    cost: 1, name: "Subtle Invocation",  description: "Act subtly to attract minimal attention in your efforts. Extra * makes the attempt even subtler.", note: "Scalable" },
+      { id: "inv_air_exclude",   cost: 2, name: "Exclude from Area",  description: "If this technique targets all characters in an area, choose 1 character in range to exclude as a target per 2 * spent this way.", note: "2 * per excluded target" },
     ],
     earth: [
       { id: "inv_ear_resistance", cost: 1, name: "Bolstered Defense",  description: "Increase your physical resistance by 1 until the beginning of your next turn." },
@@ -256,6 +257,42 @@ export const OPPORTUNITIES = Object.freeze({
       { id: "inv_voi_insight",   cost: 2, name: "Spiritual Insight",  description: "Gain spiritual insight into the nature of the universe or your own heart. At the GM's discretion, you may establish a previously unrevealed fact about your character." },
       { id: "inv_voi_inquiry",   cost: 1, name: "Inquiry Intuition",  description: "Intuit whether you can learn anything of value from your current course of inquiry." },
     ],
+  },
+
+  // Special circumstances: In the Shadowlands
+  shadowlands: {
+    air:   [{ id: "sha_air_navigate",  cost: 1, name: "Shadowlands Navigation", description: "You detect a subtle sign in your environment that lets you get your bearings — a stream running slightly less Tainted, or growths on twisted trees pointing toward the Festering Pit. This landmark helps guide you for one scene, plus one additional scene per * spent.", note: "Scalable" }],
+    earth: [{ id: "sha_ear_vigilance", cost: 2, name: "Resolute Nature",         description: "Your resolute nature steels you against the unstable environment of the Shadowlands. You count your vigilance as 1 higher the next time you seek to notice or avoid a hazardous situation or creature." }],
+    fire:  [{ id: "sha_fir_encourage", cost: 1, name: "Spur Comrades",           description: "One other character in the scene per * you spend reduces their next TN to resist physical hardship or the influence of the Shadowlands by 1.", note: "Scalable" }],
+    water: [{ id: "sha_wat_scavenge",  cost: 2, name: "Scavenge Item",           description: "By luck or careful scavenging, you find a useful item not yet corrupted by the Shadowlands. Such items have a maximum rarity of 3, plus 1 for each additional 2 * spent. The GM should modify this depending on the nature of the item.", note: "2 * per +1 rarity" }],
+    void:  [{ id: "sha_voi_undeterred",cost: 3, name: "Undeterred",              description: "Though Jigoku's power weighs heavily upon you, you are undeterred. By drawing on memories of the un-Tainted lands north of the wall, you can keep yourself focused and ignore all strife results on your next check." }],
+  },
+
+  // Special circumstances: While Tainted
+  whileTainted: {
+    air:   [{ id: "tai_air_conceal",   cost: 2, name: "Conceal Taint",    description: "Your newfound cunning redirects attention away from you, potentially concealing your Tainted nature. The TN of the next check made to scrutinize you or your actions is increased by 1." }],
+    earth: [{ id: "tai_ear_endure",    cost: 2, name: "Endure",           description: "No mortal concern can slow you, as you already endure worse than most can imagine. For the rest of the scene, whenever you suffer fatigue reduce the value suffered by 2, to a minimum of 0." }],
+    fire:  [{ id: "tai_fir_jigoku",    cost: 2, name: "Jigoku's Might",   description: "The furious power of Jigoku flows through you, granting unnatural might. Add 1 kept die showing a strife result to the next Martial Arts check you make. This effect persists until the start of their next turn." }],
+    water: [{ id: "tai_wat_fluid",     cost: 2, name: "Fluid Recovery",   description: "You briefly become fluid in mind or body, shaking off disorientation or even injury. Remove one of the following conditions: Dazed, Disoriented, Immobilized, Intoxicated, Lightly Wounded, or Prone." }],
+    void:  [{ id: "tai_voi_kansen",    cost: 1, name: "Kansen Insights",  description: "The unnatural insights of the kansen voice themselves wordlessly to you, granting knowledge you could not possibly have known otherwise. You learn something relevant to the situation, appropriate in scope to the * spent. For each * spent, you receive 1 strife.", note: "Scalable — 1 strife per *" }],
+  },
+
+  // Special circumstances: Against Tainted Threats
+  againstTainted: {
+    air:   [{ id: "att_air_weakness",  cost: 2, name: "Discern Weakness",     description: "Confronted with the horrors of the Taint, you remain alert and discern a weakness in your foe. Reduce the TN of your next check made to oppose or harm a Tainted character by 1." }],
+    earth: [{ id: "att_ear_weather",   cost: 2, name: "Weather the Reveal",   description: "You are able to weather such terrible things as the revelation of a secret mahō-tsukai or the summoning of an oni. The next time you suffer strife this scene, you suffer 2 fewer strife, to a minimum of 0." }],
+    fire:  [{ id: "att_fir_cow",       cost: 1, name: "Righteous Fury",       description: "The righteous fury you display can cow even the most terrible of Tainted fiends. Each Tainted being in the scene gains 1 strife, plus 1 additional strife for every 2 * spent. If you are unaware whether another character is Tainted, the GM records this strife secretly.", note: "Scalable" }],
+    water: [{ id: "att_wat_adapt",     cost: 1, name: "Adapt to Corruption",  description: "You adapt yourself to better fight the corrupted power before you. Once per game session, reduce the TN of a check to resist a Tainted power assailing you by 1, or increase the TN of another character's check to target you with such a power by 1." }],
+    void:  [{ id: "att_voi_discern",   cost: 2, name: "Discern the Taint",    description: "Spending 2 *: you discern that the kami have fled and the type of disturbance (mahō, kansen, or similar). Spending 3 *: you can also determine the total combat threat rating of all Tainted beings that caused the kami to flee.", note: "2 * or 3 *" }],
+  },
+
+  // Initiative check opportunities
+  initiativeCheck: {
+    air:   [{ id: "ini_air_assess",    cost: 1, name: "Assess Weakness",       description: "On an Initiative check, assess one foe's weakness. Learn one of their disadvantages of that foe's choice." }],
+    earth: [{ id: "ini_ear_suppress",  cost: 1, name: "Suppress Disadvantage", description: "On an Initiative check, choose another character's disadvantage you know. They do not apply that disadvantage to their checks this scene." }],
+    fire:  [{ id: "ini_fir_focus",     cost: 1, name: "Focused Readiness",     description: "On an Initiative check, use your focus instead of your vigilance for your initiative when surprised." }],
+    water: [{ id: "ini_wat_terrain",   cost: 1, name: "Terrain Assessment",    description: "On an Initiative check, assess the qualities of all terrain in the scene." }],
+    void:  [{ id: "ini_voi_sense",     cost: 1, name: "Sense the Otherworldly",description: "On an Initiative check, sense if there is an Otherworldly being in the scene." }],
   },
 
 });

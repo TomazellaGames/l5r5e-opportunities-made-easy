@@ -10,6 +10,7 @@
     <a class="opp-tab {{#if isCurrent}}current{{/if}}" data-tab="{{id}}">{{label}}</a>
     {{/each}}
     <a class="opp-tab {{#if invocationTab.isCurrent}}current{{/if}}" data-tab="invocations">Invocations</a>
+    <a class="opp-tab" data-tab="shadowlands">Shadowlands</a>
   </nav>
 
   <div class="opp-panels">
@@ -34,6 +35,14 @@
     {{!-- Invocations panel --}}
     <div class="opp-panel" data-tab="invocations">
       {{> opp-section title=invocationTab.sectionTitle entries=invocationTab.opps ringClass=ring}}
+    </div>
+
+    {{!-- Shadowlands panel --}}
+    <div class="opp-panel" data-tab="shadowlands">
+      {{> opp-section title=shadowlandsTab.shadowlandsTitle  entries=shadowlandsTab.shadowlands    ringClass=ring}}
+      {{> opp-section title=shadowlandsTab.whileTaintedTitle entries=shadowlandsTab.whileTainted   ringClass=ring}}
+      {{> opp-section title=shadowlandsTab.againstTitle      entries=shadowlandsTab.againstTainted ringClass=ring}}
+      {{> opp-section title=shadowlandsTab.initiativeTitle   entries=shadowlandsTab.initiativeCheck ringClass=ring}}
     </div>
 
   </div>

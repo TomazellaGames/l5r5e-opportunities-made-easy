@@ -107,6 +107,17 @@ export class OpportunitiesApp extends Application {
       isCurrent:    isInvocation,
     };
 
+    const shadowlandsTab = {
+      shadowlandsTitle:  ringLabel ? `In the Shadowlands — ${ringLabel}`      : "In the Shadowlands",
+      whileTaintedTitle: ringLabel ? `While Tainted — ${ringLabel}`            : "While Tainted",
+      againstTitle:      ringLabel ? `Against Tainted Threats — ${ringLabel}`  : "Against Tainted Threats",
+      initiativeTitle:   ringLabel ? `Initiative Check — ${ringLabel}`         : "Initiative Check",
+      shadowlands:    ring ? (OPPORTUNITIES.shadowlands[ring]    ?? []) : [],
+      whileTainted:   ring ? (OPPORTUNITIES.whileTainted[ring]   ?? []) : [],
+      againstTainted: ring ? (OPPORTUNITIES.againstTainted[ring] ?? []) : [],
+      initiativeCheck:ring ? (OPPORTUNITIES.initiativeCheck[ring]?? []) : [],
+    };
+
     return {
       oppCount:    l5r5e.summary?.opportunity ?? 0,
       ring,
@@ -115,6 +126,7 @@ export class OpportunitiesApp extends Application {
       activeOpps,
       skillGroupTabs,
       invocationTab,
+      shadowlandsTab,
     };
   }
 
