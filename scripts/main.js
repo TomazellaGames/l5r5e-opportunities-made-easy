@@ -22,17 +22,27 @@ Hooks.once("init", () => {
   class L5r5eOppsTab extends HandlebarsApplicationMixin(AbstractSidebarTab) {
     static tabName        = "l5r5eopps";
     static DEFAULT_OPTIONS = { id: "l5r5e-opportunities-tab" };
-    static PARTS          = {
-      content: {
-        template: `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
-        root: true,
-      },
-    };
+    static PARTS          = {}; // empty — template PARTS render outside the panel in v14
     async _prepareContext() { return {}; }
+
+    // _onRender fires after every render() even with empty PARTS.
+    // We inject the button directly into this.element (the sidebar panel element)
+    // rather than relying on PARTS, which positions content outside the sidebar.
     _onRender(_context, _options) {
       super._onRender(_context, _options);
-      this.element.querySelector(".opp-ref-open-btn")
-        ?.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
+      if (this.element.querySelector(".opp-sidebar-tab")) return;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "opp-sidebar-tab";
+
+      const btn = document.createElement("button");
+      btn.type      = "button";
+      btn.className = "opp-ref-open-btn";
+      btn.innerHTML = `<i class="fa-solid fa-scroll"></i> Opportunities Reference`;
+      btn.addEventListener("click", () => OpportunitiesReferenceWindow.toggle());
+
+      wrapper.appendChild(btn);
+      this.element.appendChild(wrapper);
     }
   }
 
@@ -49,7 +59,6 @@ Hooks.once("init", () => {
   loadTemplates([
     `modules/${MODULE_ID}/templates/opportunities-window.hbs`,
     `modules/${MODULE_ID}/templates/opportunities-reference.hbs`,
-    `modules/${MODULE_ID}/templates/opportunities-tab.hbs`,
   ]);
 });
 
