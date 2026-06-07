@@ -48,6 +48,20 @@ Requires the **l5r5e** system.
 | Browse all opportunities | Click the **Opportunities** tab button (sidebar) to open the reference window |
 | Filter the reference list | Use the Ring and Situation dropdowns in the reference window |
 
+## Changelog
+
+### v1.0.1
+- Added **Downtime Activities** opportunity section (10 entries, Air/Earth/Fire/Water/Void, 2 per ring).
+- Added **War — Fields of Victory** opportunity section with three subsections:
+  - *Mobilizing an Army* (11 entries including any-ring option)
+  - *Mass Battles* (11 entries)
+  - *Contested Territory* (10 entries)
+- Fixed opportunity costs in **Shadowlands**, **While Tainted**, and **Against Tainted Threats** sections to match the Core Rulebook (several entries were incorrectly set to 2★ or 3★ instead of 1★).
+- Added **Reassure** (Earth) and **Remove Strife** (Water) opportunities to the **Martial** skill group.
+
+### v1.0.0
+- Initial release.
+
 ## Author
 
 Jeferson Tomazella - [GitHub](https://github.com/TomazellaGames)

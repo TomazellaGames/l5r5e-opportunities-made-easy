@@ -186,6 +186,7 @@ export const OPPORTUNITIES = Object.freeze({
         { id: "mar_air_defense",   cost: 2, name: "Evasive Posture",   description: "Increase the TN of the next Martial Arts [Ranged] check targeting you before the start of your next turn by 2." },
       ],
       earth: [
+        { id: "mar_ear_reassure",  cost: 1, name: "Reassure",          description: "Reassure another character in the scene with your presence, allowing them to remove 2 strife." },
         { id: "mar_ear_terrain",   cost: 1, name: "Ignore Terrain",    description: "During a Movement action, ignore one terrain quality of your choice." },
         { id: "mar_ear_crit",      cost: 1, name: "Reduce Critical",   description: "Reduce the severity of the next critical strike you suffer before the start of your next turn by 1 per * spent this way.", note: "Scalable" },
         { id: "mar_ear_disadv",    cost: 2, name: "Suppress Disadvantage", description: "Do not apply one of your disadvantages to checks until the end of your next turn." },
@@ -198,6 +199,7 @@ export const OPPORTUNITIES = Object.freeze({
         { id: "mar_fir_striking",  cost: 1, name: "Striking as Fire",  description: "The next time your target suffers a critical strike, increase its severity by 1 per * spent.", note: "Scalable" },
       ],
       water: [
+        { id: "mar_wat_strife",    cost: 1, name: "Remove Strife",     description: "Remove 2 strife from yourself." },
         { id: "mar_wat_fatigue",   cost: 1, name: "Recover",           description: "Remove 1 fatigue from yourself or the target." },
         { id: "mar_wat_resist",    cost: 1, name: "Piercing Strike",   description: "Ignore 1 point of the target's physical resistance per * spent.", note: "Scalable" },
         { id: "mar_wat_move",      cost: 2, name: "Swift Step",        description: "Move 1 range band as part of this action." },
@@ -262,28 +264,133 @@ export const OPPORTUNITIES = Object.freeze({
   // Special circumstances: In the Shadowlands
   shadowlands: {
     air:   [{ id: "sha_air_navigate",  cost: 1, name: "Shadowlands Navigation", description: "You detect a subtle sign in your environment that lets you get your bearings — a stream running slightly less Tainted, or growths on twisted trees pointing toward the Festering Pit. This landmark helps guide you for one scene, plus one additional scene per * spent.", note: "Scalable" }],
-    earth: [{ id: "sha_ear_vigilance", cost: 2, name: "Resolute Nature",         description: "Your resolute nature steels you against the unstable environment of the Shadowlands. You count your vigilance as 1 higher the next time you seek to notice or avoid a hazardous situation or creature." }],
+    earth: [{ id: "sha_ear_vigilance", cost: 1, name: "Resolute Nature",         description: "Your resolute nature steels you against the unstable environment of the Shadowlands. You count your vigilance as 1 higher the next time you seek to notice or avoid a hazardous situation or creature." }],
     fire:  [{ id: "sha_fir_encourage", cost: 1, name: "Spur Comrades",           description: "One other character in the scene per * you spend reduces their next TN to resist physical hardship or the influence of the Shadowlands by 1.", note: "Scalable" }],
-    water: [{ id: "sha_wat_scavenge",  cost: 2, name: "Scavenge Item",           description: "By luck or careful scavenging, you find a useful item not yet corrupted by the Shadowlands. Such items have a maximum rarity of 3, plus 1 for each additional 2 * spent. The GM should modify this depending on the nature of the item.", note: "2 * per +1 rarity" }],
-    void:  [{ id: "sha_voi_undeterred",cost: 3, name: "Undeterred",              description: "Though Jigoku's power weighs heavily upon you, you are undeterred. By drawing on memories of the un-Tainted lands north of the wall, you can keep yourself focused and ignore all strife results on your next check." }],
+    water: [{ id: "sha_wat_scavenge",  cost: 1, name: "Scavenge Item",           description: "By luck or careful scavenging, you find a useful item not yet corrupted by the Shadowlands. Such items have a maximum rarity of 3, plus 1 for each additional * spent. The GM should modify this depending on the nature of the item.", note: "Scalable" }],
+    void:  [{ id: "sha_voi_undeterred",cost: 1, name: "Undeterred",              description: "Though Jigoku's power weighs heavily upon you, you are undeterred. By drawing on memories of the un-Tainted lands north of the wall, you can keep yourself focused and ignore all strife results on your next check." }],
   },
 
   // Special circumstances: While Tainted
   whileTainted: {
-    air:   [{ id: "tai_air_conceal",   cost: 2, name: "Conceal Taint",    description: "Your newfound cunning redirects attention away from you, potentially concealing your Tainted nature. The TN of the next check made to scrutinize you or your actions is increased by 1." }],
-    earth: [{ id: "tai_ear_endure",    cost: 2, name: "Endure",           description: "No mortal concern can slow you, as you already endure worse than most can imagine. For the rest of the scene, whenever you suffer fatigue reduce the value suffered by 2, to a minimum of 0." }],
-    fire:  [{ id: "tai_fir_jigoku",    cost: 2, name: "Jigoku's Might",   description: "The furious power of Jigoku flows through you, granting unnatural might. Add 1 kept die showing a strife result to the next Martial Arts check you make. This effect persists until the start of their next turn." }],
-    water: [{ id: "tai_wat_fluid",     cost: 2, name: "Fluid Recovery",   description: "You briefly become fluid in mind or body, shaking off disorientation or even injury. Remove one of the following conditions: Dazed, Disoriented, Immobilized, Intoxicated, Lightly Wounded, or Prone." }],
+    air:   [{ id: "tai_air_conceal",   cost: 1, name: "Conceal Taint",    description: "Your newfound cunning redirects attention away from you, potentially concealing your Tainted nature. The TN of the next check made to scrutinize you or your actions is increased by 1." }],
+    earth: [{ id: "tai_ear_endure",    cost: 1, name: "Endure",           description: "No mortal concern can slow you, as you already endure worse than most can imagine. For the rest of the scene, whenever you suffer fatigue reduce the value suffered by 2, to a minimum of 0." }],
+    fire:  [{ id: "tai_fir_jigoku",    cost: 1, name: "Jigoku's Might",   description: "The furious power of Jigoku flows through you, granting unnatural might. Add 1 kept die showing a strife result to the next Martial Arts check you make. This effect persists until the start of their next turn." }],
+    water: [{ id: "tai_wat_fluid",     cost: 1, name: "Fluid Recovery",   description: "You briefly become fluid in mind or body, shaking off disorientation or even injury. Remove one of the following conditions: Dazed, Disoriented, Immobilized, Intoxicated, Lightly Wounded, or Prone." }],
     void:  [{ id: "tai_voi_kansen",    cost: 1, name: "Kansen Insights",  description: "The unnatural insights of the kansen voice themselves wordlessly to you, granting knowledge you could not possibly have known otherwise. You learn something relevant to the situation, appropriate in scope to the * spent. For each * spent, you receive 1 strife.", note: "Scalable — 1 strife per *" }],
   },
 
   // Special circumstances: Against Tainted Threats
   againstTainted: {
-    air:   [{ id: "att_air_weakness",  cost: 2, name: "Discern Weakness",     description: "Confronted with the horrors of the Taint, you remain alert and discern a weakness in your foe. Reduce the TN of your next check made to oppose or harm a Tainted character by 1." }],
-    earth: [{ id: "att_ear_weather",   cost: 2, name: "Weather the Reveal",   description: "You are able to weather such terrible things as the revelation of a secret mahō-tsukai or the summoning of an oni. The next time you suffer strife this scene, you suffer 2 fewer strife, to a minimum of 0." }],
+    air:   [{ id: "att_air_weakness",  cost: 1, name: "Discern Weakness",     description: "Confronted with the horrors of the Taint, you remain alert and discern a weakness in your foe. Reduce the TN of your next check made to oppose or harm a Tainted character by 1." }],
+    earth: [{ id: "att_ear_weather",   cost: 1, name: "Weather the Reveal",   description: "You are able to weather such terrible things as the revelation of a secret mahō-tsukai or the summoning of an oni. The next time you suffer strife this scene, you suffer 2 fewer strife, to a minimum of 0." }],
     fire:  [{ id: "att_fir_cow",       cost: 1, name: "Righteous Fury",       description: "The righteous fury you display can cow even the most terrible of Tainted fiends. Each Tainted being in the scene gains 1 strife, plus 1 additional strife for every 2 * spent. If you are unaware whether another character is Tainted, the GM records this strife secretly.", note: "Scalable" }],
     water: [{ id: "att_wat_adapt",     cost: 1, name: "Adapt to Corruption",  description: "You adapt yourself to better fight the corrupted power before you. Once per game session, reduce the TN of a check to resist a Tainted power assailing you by 1, or increase the TN of another character's check to target you with such a power by 1." }],
-    void:  [{ id: "att_voi_discern",   cost: 2, name: "Discern the Taint",    description: "Spending 2 *: you discern that the kami have fled and the type of disturbance (mahō, kansen, or similar). Spending 3 *: you can also determine the total combat threat rating of all Tainted beings that caused the kami to flee.", note: "2 * or 3 *" }],
+    void:  [{ id: "att_voi_discern",   cost: 1, name: "Discern the Taint",    description: "Spending 1 *: you discern that the kami have fled and the type of disturbance (mahō, kansen, or similar). Spending 2 *: you can also determine the total combat threat rating of all Tainted beings that caused the kami to flee.", note: "1 * or 2 *" }],
+  },
+
+  // Downtime activity opportunities
+  downtime: {
+    air: [
+      { id: "dwn_air_learn",    cost: 1, name: "Learn Detail",          description: "Learn one detail about someone in your company (an advantage or disadvantage of their choice) per * spent. Maximum one per person per downtime scene.", note: "Scalable" },
+      { id: "dwn_air_secret",   cost: 2, name: "Secret Activity",       description: "Perform your activity without one or more other characters (your choice) knowing that you did it." },
+    ],
+    earth: [
+      { id: "dwn_ear_restore",  cost: 1, name: "Restore Companion",     description: "Another character in your company may remove 1 strife or fatigue per * spent.", note: "Scalable" },
+      { id: "dwn_ear_memorize", cost: 2, name: "Memorize Detail",       description: "Memorize a small but vital detail from your activity; you may recall it later without a check." },
+    ],
+    fire: [
+      { id: "dwn_fir_assist",   cost: 1, name: "Assist Companion",      description: "Assist 1 other character per * spent with their next downtime activity check this session.", note: "Scalable" },
+      { id: "dwn_fir_energize", cost: 2, name: "Energize Companion",    description: "Energize another character with your efforts: they may perform 1 additional downtime action (maximum 2 total in the downtime)." },
+    ],
+    water: [
+      { id: "dwn_wat_recover",  cost: 1, name: "Recover",               description: "Remove 1 strife or fatigue from yourself per * spent.", note: "Scalable" },
+      { id: "dwn_wat_friend",   cost: 2, name: "Make a Friend",         description: "Make a new friend while performing your downtime activity." },
+    ],
+    void: [
+      { id: "dwn_voi_reserve",  cost: 1, name: "Reserve Die",           description: "Reserve 1 discarded die (maximum your ranks in the skill used) to use as a kept die on your next check with the same skill.", note: "Scalable" },
+      { id: "dwn_voi_premon",   cost: 2, name: "Premonition",           description: "Have a brief premonition of a possible future event while performing the activity." },
+    ],
+  },
+
+  // War — Fields of Victory opportunities
+  war: {
+
+    // Mobilizing an Army
+    mobilizingArmy: {
+      any: [
+        { id: "mob_any_maintenance", cost: 1, name: "Ease Maintenance",    description: "Reduce the TN of the first army maintenance check by 1 per * spent.", note: "Scalable" },
+      ],
+      air: [
+        { id: "mob_air_covert",      cost: 2, name: "Covert Assembly",     description: "The army assembles without attracting the attention of local powers not at war with you." },
+        { id: "mob_air_doctrine",    cost: 1, name: "Grant Doctrine",      description: "One cohort gains the doctrine Out of Nowhere or Sappers." },
+      ],
+      earth: [
+        { id: "mob_ear_fortify",     cost: 2, name: "Secure Fortification",description: "Receive use of a nearby fortification (outpost: -2 attrition, difficulty 6)." },
+        { id: "mob_ear_discipline",  cost: 1, name: "Bolster Discipline",  description: "Increase the army's discipline by 5." },
+      ],
+      fire: [
+        { id: "mob_fir_assault",     cost: 2, name: "Inspired Assault",    description: "In the first mass battle, reduce the TN of each leader's Assault actions by 1." },
+        { id: "mob_fir_strength",    cost: 1, name: "Bolster Strength",    description: "Increase the army's strength by 5." },
+      ],
+      water: [
+        { id: "mob_wat_funds",       cost: 1, name: "Raise Funds",         description: "Raise 100 koku per * spent. Spending koku outside of equipment or mercenaries costs 10 Honor.", note: "Scalable" },
+        { id: "mob_wat_upgrade",     cost: 2, name: "Army Upgrade",        description: "The army gains one upgrade: Baggage Train or Battlefield Medical Supplies." },
+      ],
+      void: [
+        { id: "mob_voi_delay",       cost: 2, name: "Delayed Assembly",    description: "The army assembles at a location of your choice up to one month in the future, instead of immediately." },
+        { id: "mob_voi_boost",       cost: 1, name: "Boost Army",          description: "Increase the army's strength and discipline by 3." },
+      ],
+    },
+
+    // Mass Battles
+    massBattles: {
+      air: [
+        { id: "bat_air_scheme",      cost: 1, name: "Aid Scheme",          description: "Reduce the TN of an allied leader's next Scheme check by 1 per * spent. This effect persists until the end of the scene.", note: "Scalable" },
+        { id: "bat_air_fortbreak",   cost: 3, name: "Break Fortification", description: "A leader in a fortification loses its benefits until their next turn." },
+      ],
+      earth: [
+        { id: "bat_ear_panic",       cost: 1, name: "Quell Panic",         description: "Remove 1 panic from your army per * spent.", note: "Scalable" },
+        { id: "bat_ear_shield",      cost: 3, name: "Shield Cohort",       description: "An allied leader's cohort cannot be targeted by Attack actions until that leader's next turn." },
+      ],
+      fire: [
+        { id: "bat_fir_panic",       cost: 1, name: "Spread Panic",        description: "The enemy army suffers 1 panic per * spent.", note: "Scalable" },
+        { id: "bat_fir_crit",        cost: 1, name: "Exploit Opening",     description: "When attacking a leader's cohort whose Vigilance is equal to or less than the * spent, inflict a critical strike (using one weapon's Lethality) after resolving the action.", note: "Scalable" },
+      ],
+      water: [
+        { id: "bat_wat_move",        cost: 1, name: "Aid Movement",        description: "Reduce the TN of an allied leader's next Movement check by 1 per * spent.", note: "Scalable" },
+        { id: "bat_wat_immobilize",  cost: 3, name: "Immobilize Cohort",   description: "An enemy leader's cohort cannot perform Movement actions until that leader's next turn." },
+      ],
+      void: [
+        { id: "bat_voi_attrition",   cost: 1, name: "Mutual Attrition",    description: "Your army and each enemy army suffer 2 attrition per * spent.", note: "Scalable" },
+        { id: "bat_voi_challenge",   cost: 3, name: "Issue Challenge",      description: "When performing a Support action, you may immediately perform a Challenge action targeting an enemy leader." },
+        { id: "bat_voi_boost",       cost: 2, name: "Boost Army",          description: "Increase your army's strength and discipline by 3. This effect persists until the end of the scene." },
+      ],
+    },
+
+    // Contested Territory
+    contestedTerritory: {
+      air: [
+        { id: "ctr_air_init",        cost: 1, name: "Combat Readiness",    description: "In the next conflict scene this session, add a kept die showing a success result to your Initiative check." },
+        { id: "ctr_air_reroll",      cost: 2, name: "Undermine Foe",       description: "In the next conflict scene, choose one character — in their next check they must reroll all dice showing a success result. Spending 3 * instead affects all their checks that scene.", note: "2 * or 3 *" },
+      ],
+      earth: [
+        { id: "ctr_ear_unknown",     cost: 1, name: "Read the Unknown",    description: "Reduce the TN of your next check to deal with an unknown situation or opponent by 1." },
+        { id: "ctr_ear_conditions",  cost: 2, name: "Cast Off Conditions", description: "Remove 1 strife for each condition you are currently suffering." },
+      ],
+      fire: [
+        { id: "ctr_fir_study",       cost: 1, name: "Quick Study",         description: "Immediately attempt a Scholar check of your choice about the situation or a present NPC, with the TN reduced by 1." },
+        { id: "ctr_fir_incite",      cost: 1, name: "Incite Allies",       description: "A number of allied characters of your choice each remove 1 strife per * spent; you receive 1 strife per character affected.", note: "Scalable" },
+      ],
+      water: [
+        { id: "ctr_wat_friendly",    cost: 2, name: "Win Over Foe",        description: "Per 2 * spent, 1 hostile character becomes more friendly (not applicable during active combat; they may change their objective).", note: "Scalable — 2 * per character" },
+        { id: "ctr_wat_terrain",     cost: 1, name: "Read the Land",       description: "Discover a key feature or terrain of the area and whether enemies have passed through recently." },
+      ],
+      void: [
+        { id: "ctr_voi_reconcile",   cost: 1, name: "Shared Moment",       description: "You and 1 hostile character (GM's choice) each recover 2 strife per * spent.", note: "Scalable" },
+        { id: "ctr_voi_refuge",      cost: 3, name: "Find Refuge",         description: "Discover a neutral meeting place, a protective legal precedent, or a safe haven applicable to the current situation." },
+      ],
+    },
+
   },
 
   // Initiative check opportunities
