@@ -51,6 +51,9 @@ Requires the **l5r5e** system.
 ## Changelog
 
 ### v1.0.1
+- Fixed **Tabs not showing** - now tabs Downtime and War show correctly on the opportunity window.
+
+### v1.0.1
 - Added **Downtime Activities** opportunity section (10 entries, Air/Earth/Fire/Water/Void, 2 per ring).
 - Added **War — Fields of Victory** opportunity section with three subsections:
   - *Mobilizing an Army* (11 entries including any-ring option)
