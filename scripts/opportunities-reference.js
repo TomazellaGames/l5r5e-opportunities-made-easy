@@ -43,6 +43,16 @@ function buildEntries() {
   for (const [ring, opps] of Object.entries(OPPORTUNITIES.initiativeCheck))
     for (const opp of opps) push(opp, ring, "initiative", "Initiative");
 
+  for (const [ring, opps] of Object.entries(OPPORTUNITIES.downtime))
+    for (const opp of opps) push(opp, ring, "downtime", "Downtime");
+
+  for (const [ring, opps] of Object.entries(OPPORTUNITIES.war.mobilizingArmy))
+    for (const opp of opps) push(opp, ring, "war", "War");
+  for (const [ring, opps] of Object.entries(OPPORTUNITIES.war.massBattles))
+    for (const opp of opps) push(opp, ring, "war", "War");
+  for (const [ring, opps] of Object.entries(OPPORTUNITIES.war.contestedTerritory))
+    for (const opp of opps) push(opp, ring, "war", "War");
+
   return entries;
 }
 

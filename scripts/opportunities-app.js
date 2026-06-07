@@ -118,6 +118,23 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
       initiativeCheck: ring ? (OPPORTUNITIES.initiativeCheck[ring] ?? []) : [],
     };
 
+    const downtimeTab = {
+      title: ringLabel ? `Downtime — ${ringLabel}` : "Downtime Activities",
+      opps:  ring ? (OPPORTUNITIES.downtime[ring] ?? []) : [],
+    };
+
+    const warTab = {
+      mobilizingTitle:  ringLabel ? `Mobilizing an Army — ${ringLabel}`  : "Mobilizing an Army",
+      massBattlesTitle: ringLabel ? `Mass Battles — ${ringLabel}`         : "Mass Battles",
+      contestedTitle:   ringLabel ? `Contested Territory — ${ringLabel}`  : "Contested Territory",
+      mobilizing: [
+        ...(OPPORTUNITIES.war.mobilizingArmy.any ?? []),
+        ...(ring ? (OPPORTUNITIES.war.mobilizingArmy[ring] ?? []) : []),
+      ],
+      massBattles: ring ? (OPPORTUNITIES.war.massBattles[ring]         ?? []) : [],
+      contested:   ring ? (OPPORTUNITIES.war.contestedTerritory[ring]  ?? []) : [],
+    };
+
     return {
       oppCount:    l5r5e.summary?.opportunity ?? 0,
       ring,
@@ -127,6 +144,8 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
       skillGroupTabs,
       invocationTab,
       shadowlandsTab,
+      downtimeTab,
+      warTab,
     };
   }
 
