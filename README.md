@@ -50,7 +50,7 @@ Requires the **l5r5e** system.
 
 ## Changelog
 
-### v1.0.1
+### v1.0.2
 - Fixed **Tabs not showing** - now tabs Downtime and War show correctly on the opportunity window.
 
 ### v1.0.1
