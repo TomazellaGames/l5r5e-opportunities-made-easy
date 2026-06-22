@@ -9,6 +9,20 @@ Hooks.once("init", () => {
     for (let i = 0; i < n; i++) out += options.fn(this);
     return out;
   });
+
+  // Convert notation tokens in description/note text to proper icons.
+  // * → opportunity icon   {ring} → blank ring die   {strife} → strife face   {success} → success face
+  Handlebars.registerHelper("fmtOpp", function (text) {
+    if (!text) return "";
+    const escaped = Handlebars.escapeExpression(text);
+    return new Handlebars.SafeString(
+      escaped
+        .replace(/\*/g,        '<i class="i_opportunity"></i>')
+        .replace(/\{ring\}/g,  '<i class="i_ring"></i>')
+        .replace(/\{strife\}/g,'<i class="i_strife"></i>')
+        .replace(/\{success\}/g,'<i class="i_success"></i>')
+    );
+  });
 });
 
 /** Guard: only inject the button on genuine L5R dice rolls */

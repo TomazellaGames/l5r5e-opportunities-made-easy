@@ -135,6 +135,21 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
       contested:   ring ? (OPPORTUNITIES.war.contestedTerritory[ring]  ?? []) : [],
     };
 
+    const negotiationTab = {
+      title: ringLabel ? `Negotiation — ${ringLabel}` : "Negotiation",
+      opps:  ring ? (OPPORTUNITIES.negotiation[ring] ?? []) : [],
+    };
+
+    const romanceTab = {
+      title: ringLabel ? `Romance — ${ringLabel}` : "Romance",
+      opps:  ring ? (OPPORTUNITIES.romance[ring] ?? []) : [],
+    };
+
+    const espionageTab = {
+      title: ringLabel ? `Espionage — ${ringLabel}` : "Espionage",
+      opps:  ring ? (OPPORTUNITIES.espionage[ring] ?? []) : [],
+    };
+
     return {
       oppCount:    l5r5e.summary?.opportunity ?? 0,
       ring,
@@ -146,6 +161,9 @@ export class OpportunitiesApp extends HandlebarsApplicationMixin(ApplicationV2) 
       shadowlandsTab,
       downtimeTab,
       warTab,
+      negotiationTab,
+      romanceTab,
+      espionageTab,
     };
   }
 

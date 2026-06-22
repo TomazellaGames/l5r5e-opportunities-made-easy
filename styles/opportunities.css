@@ -185,3 +185,86 @@
   font-size: 0.8rem;
   font-style: italic;
 }
+
+/* ── Reference window list ── */
+.l5r5e-opportunities-made-easy .opp-ref-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-entry {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(186, 187, 177, 0.15);
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-entry:last-child {
+  border-bottom: none;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-cost {
+  flex-shrink: 0;
+  min-width: 1.5rem;
+  display: flex;
+  gap: 0.1rem;
+  align-items: center;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-name {
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-tags {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-ring-tag,
+.l5r5e-opportunities-made-easy .opp-ref-sit-tag {
+  font-size: 0.7rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  background: rgba(186, 187, 177, 0.15);
+  border: 1px solid rgba(186, 187, 177, 0.3);
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-ring-tag.air   { color: rgb(145, 120, 150); }
+.l5r5e-opportunities-made-easy .opp-ref-ring-tag.earth { color: rgb(105, 150, 120); }
+.l5r5e-opportunities-made-easy .opp-ref-ring-tag.fire  { color: rgb(155, 115, 80);  }
+.l5r5e-opportunities-made-easy .opp-ref-ring-tag.water { color: rgb(95, 145, 155);  }
+.l5r5e-opportunities-made-easy .opp-ref-ring-tag.void  { color: rgb(75, 70, 65);    }
+.l5r5e-opportunities-made-easy .opp-ref-ring-tag.any   { color: rgb(118, 79, 64);   }
+
+.l5r5e-opportunities-made-easy .opp-ref-desc {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-note {
+  display: block;
+  font-size: 0.75rem;
+  font-style: italic;
+  margin-top: 0.05rem;
+}
+
+.l5r5e-opportunities-made-easy .opp-ref-hidden {
+  display: none;
+}
+
+/* ── Opportunity icon inside descriptions ── */
+.l5r5e-opportunities-made-easy .opp-desc i.i_opportunity,
+.l5r5e-opportunities-made-easy .opp-note i.i_opportunity,
+.l5r5e-opportunities-made-easy .opp-ref-desc i.i_opportunity,
+.l5r5e-opportunities-made-easy .opp-ref-note i.i_opportunity {
+  font-size: 1em;
+  vertical-align: middle;
+}

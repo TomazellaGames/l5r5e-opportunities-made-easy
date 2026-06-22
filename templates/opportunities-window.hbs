@@ -13,6 +13,9 @@
     <a class="opp-tab" data-tab="shadowlands">Shadowlands</a>
     <a class="opp-tab" data-tab="downtime">Downtime</a>
     <a class="opp-tab" data-tab="war">War</a>
+    <a class="opp-tab" data-tab="negotiation">Negotiation</a>
+    <a class="opp-tab" data-tab="romance">Romance</a>
+    <a class="opp-tab" data-tab="espionage">Espionage</a>
   </nav>
 
   <div class="opp-panels">
@@ -59,6 +62,21 @@
       {{> opp-section title=warTab.contestedTitle   entries=warTab.contested   ringClass=ring}}
     </div>
 
+    {{!-- Negotiation panel --}}
+    <div class="opp-panel" data-tab="negotiation">
+      {{> opp-section title=negotiationTab.title entries=negotiationTab.opps ringClass=ring}}
+    </div>
+
+    {{!-- Romance panel --}}
+    <div class="opp-panel" data-tab="romance">
+      {{> opp-section title=romanceTab.title entries=romanceTab.opps ringClass=ring}}
+    </div>
+
+    {{!-- Espionage panel --}}
+    <div class="opp-panel" data-tab="espionage">
+      {{> opp-section title=espionageTab.title entries=espionageTab.opps ringClass=ring}}
+    </div>
+
   </div>
 
 </div>
@@ -74,8 +92,8 @@
       <span class="opp-cost">{{#times this.cost}}<i class="i_opportunity"></i>{{/times}}</span>
       <div class="opp-body">
         <strong class="opp-name">{{this.name}}</strong>
-        <p class="opp-desc">{{this.description}}</p>
-        {{#if this.note}}<em class="opp-note">{{this.note}}</em>{{/if}}
+        <p class="opp-desc">{{fmtOpp this.description}}</p>
+        {{#if this.note}}<em class="opp-note">{{fmtOpp this.note}}</em>{{/if}}
       </div>
     </li>
     {{/each}}

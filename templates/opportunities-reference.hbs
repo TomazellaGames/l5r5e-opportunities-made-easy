@@ -27,6 +27,11 @@
         <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="whileTainted">Tainted</button>
         <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="againstTainted">vs Tainted</button>
         <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="initiative">Initiative</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="downtime">Downtime</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="war">War</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="negotiation">Negotiation</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="romance">Romance</button>
+        <button class="opp-ref-filter"            data-filter-type="situation" data-filter-value="espionage">Espionage</button>
       </div>
     </div>
   </div>
@@ -42,8 +47,8 @@
           <span class="opp-ref-sit-tag">{{situationLabel}}</span>
         </div>
       </div>
-      <p class="opp-ref-desc">{{description}}</p>
-      {{#if note}}<em class="opp-ref-note">{{note}}</em>{{/if}}
+      <p class="opp-ref-desc">{{fmtOpp description}}</p>
+      {{#if note}}<em class="opp-ref-note">{{fmtOpp note}}</em>{{/if}}
     </li>
     {{/each}}
   </ol>

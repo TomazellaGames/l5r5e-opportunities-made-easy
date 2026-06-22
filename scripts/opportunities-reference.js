@@ -53,6 +53,13 @@ function buildEntries() {
   for (const [ring, opps] of Object.entries(OPPORTUNITIES.war.contestedTerritory))
     for (const opp of opps) push(opp, ring, "war", "War");
 
+  for (const [ring, opps] of Object.entries(OPPORTUNITIES.negotiation))
+    for (const opp of opps) push(opp, ring, "negotiation", "Negotiation");
+  for (const [ring, opps] of Object.entries(OPPORTUNITIES.romance))
+    for (const opp of opps) push(opp, ring, "romance", "Romance");
+  for (const [ring, opps] of Object.entries(OPPORTUNITIES.espionage))
+    for (const opp of opps) push(opp, ring, "espionage", "Espionage");
+
   return entries;
 }
 
